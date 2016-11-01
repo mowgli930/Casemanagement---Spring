@@ -3,6 +3,8 @@ package se.plushogskolan.casemanagement.config;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import static se.plushogskolan.casemanagement.properties.PropertyReader.readProperty;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -17,7 +19,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
-@EnableJpaRepositories("se.ringbert.spring.repository")
+@EnableJpaRepositories("se.plushogskolan.casemanagement.repository")
 @EnableTransactionManagement
 
 public class InfrastructurConfig {
@@ -28,8 +30,8 @@ public class InfrastructurConfig {
 		HikariConfig config = new HikariConfig();
 		config.setDriverClassName("com.mysql.jdbc.Driver");
 		config.setJdbcUrl("jdbc:mysql://localhost:3306/springdb");
-		config.setUsername("root");
-		config.setPassword("root");
+		config.setUsername(readProperty("username"));
+		config.setPassword(readProperty("password"));
 
 		return new HikariDataSource(config);
 	}
@@ -45,7 +47,6 @@ public class InfrastructurConfig {
 		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
 		adapter.setDatabase(Database.MYSQL);
 		adapter.setGenerateDdl(true);
-		
 
 		return adapter;
 	}
@@ -59,6 +60,6 @@ public class InfrastructurConfig {
 		factory.setPackagesToScan("se.plushogskolan.casemanagement.model");
 
 		return factory;
-}
-	
+	}
+
 }

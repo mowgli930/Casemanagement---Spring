@@ -1,14 +1,24 @@
 package se.plushogskolan.casemanagement.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+@Entity
 public final class Team {
-    // Required
+	
+	@Id
+	@GeneratedValue
+    private Long id;
+    
     private String name;
-    // Optional
-    private int id;
+   
     private boolean active;
 
-    private Team(int id, boolean active, String name) {
-        this.id = id;
+    private Team(boolean active, String name) {
         this.active = active;
         this.name = name;
     }
@@ -21,7 +31,6 @@ public final class Team {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + id;
         result = prime * result + name.hashCode();
         return result;
     }
@@ -46,10 +55,10 @@ public final class Team {
 
     @Override
     public String toString() {
-        return "Team [id=" + id + ", name=" + name + ", active=" + active + "]";
+    	return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
@@ -62,8 +71,6 @@ public final class Team {
     }
 
     public static final class TeamBuilder {
-        // Optional
-        private int id = 0;
         private boolean active = true;
 
         private TeamBuilder() {
@@ -72,12 +79,7 @@ public final class Team {
 
         public Team build(String name) {
             // Required name
-            return new Team(id, active, name);
-        }
-
-        public TeamBuilder setId(int id) {
-            this.id = id;
-            return this;
+            return new Team(active, name);
         }
 
         public TeamBuilder setActive(boolean active) {

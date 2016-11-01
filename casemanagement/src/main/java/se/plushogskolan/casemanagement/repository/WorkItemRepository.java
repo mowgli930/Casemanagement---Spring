@@ -2,10 +2,12 @@ package se.plushogskolan.casemanagement.repository;
 
 import java.util.List;
 
+import org.springframework.data.repository.PagingAndSortingRepository;
+
 import se.plushogskolan.casemanagement.exception.RepositoryException;
 import se.plushogskolan.casemanagement.model.WorkItem;
 
-public interface WorkItemRepository {
+public interface WorkItemRepository extends PagingAndSortingRepository<WorkItem, Long>{
 
     void saveWorkItem(WorkItem workItem) throws RepositoryException;
     

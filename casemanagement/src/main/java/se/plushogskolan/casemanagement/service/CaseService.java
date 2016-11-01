@@ -2,6 +2,9 @@ package se.plushogskolan.casemanagement.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import se.plushogskolan.casemanagement.exception.RepositoryException;
 import se.plushogskolan.casemanagement.exception.ServiceException;
 import se.plushogskolan.casemanagement.model.Issue;
@@ -13,6 +16,7 @@ import se.plushogskolan.casemanagement.repository.TeamRepository;
 import se.plushogskolan.casemanagement.repository.UserRepository;
 import se.plushogskolan.casemanagement.repository.WorkItemRepository;
 
+@Service
 public final class CaseService {
 
     private final UserRepository userRepository;
@@ -20,6 +24,7 @@ public final class CaseService {
     private final WorkItemRepository workItemRepository;
     private final IssueRepository issueRepository;
 
+    @Autowired
     public CaseService(UserRepository userRepository, TeamRepository teamRepository,
             WorkItemRepository workItemRepository, IssueRepository issueRepository) {
         this.userRepository = userRepository;
@@ -28,6 +33,8 @@ public final class CaseService {
         this.issueRepository = issueRepository;
     }
 
+    //USER
+    
     public void saveUser(User user) {
 
         try {
@@ -132,19 +139,21 @@ public final class CaseService {
             throw new ServiceException("Could not get User by TeamId, teamId=" + teamId, e);
         }
     }
+    
+    //TEAM
 
     public void saveTeam(Team team) {
         try {
-            teamRepository.saveTeam(team);
-        } catch (RepositoryException e) {
+            teamRepository.save(team);
+        } catch (Exception e) {
             throw new ServiceException("Could not save Team: " + team.toString(), e);
         }
     }
 
     public void updateTeam(Team newValues) {
         try {
-            teamRepository.updateTeam(newValues);
-        } catch (RepositoryException e) {
+            teamRepository.save(newValues);
+        } catch (Exception e) {
             throw new ServiceException("Could not update Team with id " + newValues.getId(), e);
         }
     }
@@ -185,6 +194,8 @@ public final class CaseService {
                     "Could not add User with id \"" + userId + "\" to Team with id \"" + teamId + "\".", e);
         }
     }
+    
+    //WORKITEM
 
     public void saveWorkItem(WorkItem workItem) {
         try {
@@ -260,12 +271,15 @@ public final class CaseService {
             throw new ServiceException("Could not WorkItems with Issues", e);
         }
     }
+    
+    //ISSUE
 
+    //TODO finish method when workItem is done
     public void saveIssue(Issue issue) {
         try {
-            if (workItemIsDone(issue.getWorkItemId())) {
-                issueRepository.saveIssue(issue);
-                workItemRepository.updateStatusById(issue.getWorkItemId(), WorkItem.Status.UNSTARTED);
+            if (true/*workItemIsDone(issue.getWorkitem().getId())*/) {
+                issueRepository.save(issue);
+                workItemRepository.updateStatusById(issue.getWorkitem().getId(), WorkItem.Status.UNSTARTED);
             } else {
                 throw new ServiceException("WorkItem does not have status done");
             }
@@ -274,26 +288,26 @@ public final class CaseService {
         }
     }
 
-    public void updateIssueDescription(int issueId, String description) {
+    public void updateIssueDescription(Long issueId, String description) {
         try {
-            Issue issueToUpdate = issueRepository.getIssueById(issueId);
-            Issue updatedIssue = Issue.builder(issueToUpdate.getWorkItemId()).setId(issueId).setDescription(description)
+            Issue issueToUpdate = issueRepository.findOne(issueId);
+            Issue updatedIssue = Issue.builder(issueToUpdate.getWorkitem()).setDescription(description)
                     .build();
-            issueRepository.updateIssue(updatedIssue);
-        } catch (RepositoryException e) {
+            issueRepository.save(updatedIssue);
+        } catch (Exception e) {
             throw new ServiceException("Could not change description of issue with id: " + issueId, e);
         }
     }
 
-    public void assignIssueToWorkItem(int issueId, int workItemId) {
+    //TODO Fix method when Workitem is done
+    public void assignIssueToWorkItem(Long issueId, Long workItemId) {
 
         try {
             if (workItemIsDone(workItemId)) {
-                Issue issueToUpdate = issueRepository.getIssueById(issueId);
-                Issue updatedIssue = Issue.builder(workItemId).setId(issueId)
-                        .setDescription(issueToUpdate.getDescription()).build();
-                issueRepository.updateIssue(updatedIssue);
-                workItemRepository.updateStatusById(workItemId, WorkItem.Status.UNSTARTED);
+                Issue issueToUpdate = issueRepository.findOne(issueId);
+                Issue updatedIssue = Issue.builder(workItemRepository.findOne(workItemId)).setDescription(issueToUpdate.getDescription()).build();
+                issueRepository.save(updatedIssue);
+                //workItemRepository.updateStatusById(workItemId, WorkItem.Status.UNSTARTED);
             } else {
                 throw new ServiceException("WorkItem does not have status done");
             }
@@ -361,14 +375,14 @@ public final class CaseService {
         return workItems.size() < 5;
     }
 
-    private boolean workItemIsDone(int workItemId) throws RepositoryException {
-        WorkItem workItem = workItemRepository.getWorkItemById(workItemId);
+    private boolean workItemIsDone(Long workItemId) throws RepositoryException {
+        WorkItem workItem = workItemRepository.findOne(workItemId);
         return WorkItem.Status.DONE.equals(workItem.getStatus());
     }
 
     private void cleanRelatedDataOnWorkItemDelete(int workItemId) throws RepositoryException {
         for (Issue issue : issueRepository.getIssuesByWorkItemId(workItemId))
-            issueRepository.deleteIssue(issue.getId());
+            issueRepository.delete(issue.getId());
     }
 
 }
