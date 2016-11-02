@@ -3,6 +3,9 @@ package se.plushogskolan.casemanagement.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import se.plushogskolan.casemanagement.exception.RepositoryException;
@@ -290,7 +293,7 @@ public final class CaseService {
 
     public void updateIssueDescription(Long issueId, String description) {
         try {
-            Issue issueToUpdate = issueRepository.findOne(issueId);
+            Issue issueToUpdate = issueRepository.findById(issueId);
             Issue updatedIssue = Issue.builder(issueToUpdate.getWorkitem()).setDescription(description)
                     .build();
             issueRepository.save(updatedIssue);
@@ -304,7 +307,7 @@ public final class CaseService {
 
         try {
             if (workItemIsDone(workItemId)) {
-                Issue issueToUpdate = issueRepository.findOne(issueId);
+                Issue issueToUpdate = issueRepository.findById(issueId);
                 Issue updatedIssue = Issue.builder(workItemRepository.findOne(workItemId)).setDescription(issueToUpdate.getDescription()).build();
                 issueRepository.save(updatedIssue);
                 //workItemRepository.updateStatusById(workItemId, WorkItem.Status.UNSTARTED);
@@ -316,6 +319,11 @@ public final class CaseService {
                     "Could not assign new work item to Issue with id " + issueId + " and work item id " + workItemId,
                     e);
         }
+    }
+    
+    public Page<Issue> getAllIssues(int start, int end){
+    	Page<Issue> issues = (Page<Issue>) issueRepository.findAll(new PageRequest(start, end));
+    	return issues;
     }
 
     private boolean userFillsRequirements(User user) throws RepositoryException {
@@ -382,7 +390,7 @@ public final class CaseService {
 
     private void cleanRelatedDataOnWorkItemDelete(int workItemId) throws RepositoryException {
         for (Issue issue : issueRepository.getIssuesByWorkItemId(workItemId))
-            issueRepository.delete(issue.getId());
+            issueRepository.removeById(issue.getId());
     }
 
 }
