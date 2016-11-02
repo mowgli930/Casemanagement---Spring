@@ -38,7 +38,7 @@ public final class CaseService {
     //USER
     
     public void saveUser(User user) {
-
+	
         try {
             if (userFillsRequirements(user)) {
                 userRepository.saveUser(user);

@@ -2,10 +2,12 @@ package se.plushogskolan.casemanagement.repository;
 
 import java.util.List;
 
+import org.springframework.data.repository.PagingAndSortingRepository;
+
 import se.plushogskolan.casemanagement.exception.RepositoryException;
 import se.plushogskolan.casemanagement.model.User;
 
-public interface UserRepository {
+public interface UserRepository extends PagingAndSortingRepository<User, Long>{
 
     void saveUser(User user) throws RepositoryException;
 
