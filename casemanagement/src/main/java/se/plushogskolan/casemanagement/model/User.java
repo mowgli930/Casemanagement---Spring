@@ -1,6 +1,9 @@
 package se.plushogskolan.casemanagement.model;
 
-public final class User {
+import javax.persistence.Entity;
+
+@Entity
+public final class User extends AbstractEntity {
     // Required
     private String username;
     // Optional
