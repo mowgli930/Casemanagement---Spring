@@ -7,34 +7,34 @@ import java.util.Properties;
 
 public class PropertyReader {
 
-	public static String readProperty(String propertyName) {
+    public static String readProperty(String propertyName) {
 
-		Properties prop = new Properties();
-		InputStream input = null;
+	Properties prop = new Properties();
+	InputStream input = null;
 
+	try {
+
+	    input = new FileInputStream("config.properties");
+
+	    prop.load(input);
+
+	    String property = prop.getProperty(propertyName);
+
+	    return property;
+
+	} catch (IOException e) {
+	    e.printStackTrace();
+	} finally {
+	    if (input != null) {
 		try {
-
-			input = new FileInputStream("config.properties");
-
-			prop.load(input);
-
-			String property = prop.getProperty(propertyName);
-
-			return property;
-
+		    input.close();
 		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+		    e.printStackTrace();
 		}
-		return null;
-
+	    }
 	}
+	return null;
+
+    }
 
 }
