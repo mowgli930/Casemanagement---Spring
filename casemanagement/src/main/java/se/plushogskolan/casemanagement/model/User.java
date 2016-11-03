@@ -2,6 +2,7 @@ package se.plushogskolan.casemanagement.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.ManyToOne;
@@ -18,6 +19,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class User extends AbstractEntity {
 
+    @Column(unique = true)
     private String username;
 
     @ManyToOne
