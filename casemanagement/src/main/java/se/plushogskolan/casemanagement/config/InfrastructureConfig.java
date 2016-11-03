@@ -24,7 +24,6 @@ import se.plushogskolan.casemanagement.auditing.CustomAuditorAware;
 @Configuration
 @EnableJpaRepositories("se.plushogskolan.casemanagement.repository")
 @EnableTransactionManagement
-
 public class InfrastructureConfig {
 
 	@Bean
