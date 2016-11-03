@@ -18,7 +18,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public final class Issue extends AbstractEntity {
 
-    @OneToOne
+    @OneToOne(mappedBy = "issue")
     private WorkItem workItem;
 
     private String description;
@@ -34,6 +34,8 @@ public final class Issue extends AbstractEntity {
 
     @LastModifiedDate
     private Date lastModifiedDate;
+    
+    protected Issue() {}
 
     private Issue(WorkItem workItem, String description) {
 
