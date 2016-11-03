@@ -1,18 +1,27 @@
 package se.plushogskolan.casemanagement.model;
 
-public final class WorkItem {
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
-    private final int id;
-    private final int userId;
-    private final String description;
-    private final Status status;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+@Entity
+public final class WorkItem extends AbstractEntity {	
+	
+    private int userId;
+    private String description;
+    
+    @ManyToOne
+    private Status status;
 
     public enum Status {
         UNSTARTED, STARTED, DONE
     }
-
-    private WorkItem(int id, int userId, String description, Status status) {
-        this.id = id;
+    
+    protected WorkItem() {}
+    
+    private WorkItem(int userId, String description, Status status) {
         this.userId = userId;
         this.description = description;
         this.status = status;
@@ -24,8 +33,7 @@ public final class WorkItem {
 
     @Override
     public String toString() {
-        return "WorkItem [id = " + id + ", userId = " + userId + ", description = " + description + ", Status = "
-                + status + "]";
+        return ToStringBuilder.reflectionToString(ToStringStyle.SIMPLE_STYLE);
     }
 
     @Override
@@ -35,7 +43,7 @@ public final class WorkItem {
         }
         if (obj instanceof WorkItem) {
             WorkItem otherWorkItem = (WorkItem) obj;
-            return id == otherWorkItem.id && userId == otherWorkItem.userId
+            return userId == otherWorkItem.userId
                     && description.equals(otherWorkItem.description) && status.equals(otherWorkItem.status);
         }
         return false;
@@ -44,14 +52,9 @@ public final class WorkItem {
     @Override
     public int hashCode() {
         int result = 17;
-        result += 31 * id;
         result += 31 * userId;
         result += 31 * description.hashCode();
         return result;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public int getUserId() {
@@ -67,7 +70,6 @@ public final class WorkItem {
     }
 
     public static final class WorkItemBuilder {
-        private int id = 0;
         private int userId = 0;
         private String description = "";
         private Status status = Status.UNSTARTED;
@@ -75,11 +77,6 @@ public final class WorkItem {
         // Empty private constructor to hide visibility
         private WorkItemBuilder() {
             ;
-        }
-
-        public WorkItemBuilder setId(int id) {
-            this.id = id;
-            return this;
         }
 
         public WorkItemBuilder setUserId(int userId) {
@@ -115,7 +112,7 @@ public final class WorkItem {
         }
 
         public WorkItem build() {
-            return new WorkItem(id, userId, description, status);
+            return new WorkItem(userId, description, status);
         }
 
     }

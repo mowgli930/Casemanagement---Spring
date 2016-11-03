@@ -8,7 +8,7 @@ import se.plushogskolan.casemanagement.exception.RepositoryException;
 import se.plushogskolan.casemanagement.model.WorkItem;
 
 public interface WorkItemRepository extends PagingAndSortingRepository<WorkItem, Long>{
-
+	
     void saveWorkItem(WorkItem workItem) throws RepositoryException;
     
     void updateStatusById(int workItemId, WorkItem.Status workItemStatus) throws RepositoryException;
