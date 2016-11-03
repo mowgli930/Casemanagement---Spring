@@ -1,5 +1,6 @@
 package se.plushogskolan.casemanagement.model;
 
+import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -26,8 +27,8 @@ public class User extends AbstractEntity {
 	@ManyToOne
 	private Team team;
 
-	@OneToMany
-	private WorkItem workItem;
+	@OneToMany(mappedBy = "user")
+	private Collection<WorkItem> workItems;
 
 	private boolean isActive;
 
@@ -47,14 +48,14 @@ public class User extends AbstractEntity {
 	@LastModifiedDate
 	private Date lastModifiedDate;
 
-	private User(boolean isActive, String username, String firstName, String lastName, Team team, WorkItem workItem) {
+	private User(boolean isActive, String username, String firstName, String lastName, Team team, Collection<WorkItem> workItems) {
 
 		this.isActive = isActive;
 		this.username = username;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.team = team;
-		this.workItem = workItem;
+		this.workItems = workItems;
 	}
 
 	protected User() {
@@ -112,8 +113,8 @@ public class User extends AbstractEntity {
 		return team;
 	}
 
-	public WorkItem getWorkItem() {
-		return workItem;
+	public Collection<WorkItem> getWorkItem() {
+		return workItems;
 	}
 
 	public String getUsername() {
@@ -163,7 +164,7 @@ public class User extends AbstractEntity {
 	public static final class UserBuilder {
 
 		private Team team = null;
-		private WorkItem workItem = null;
+		private Collection<WorkItem> workItems = null;
 		private boolean isActive = true;
 		private String firstName = "";
 		private String lastName = "";
@@ -174,7 +175,7 @@ public class User extends AbstractEntity {
 
 		public User build(String username) {
 
-			return new User(isActive, username, firstName, lastName, team, workItem);
+			return new User(isActive, username, firstName, lastName, team, workItems);
 		}
 
 		public UserBuilder setActive(boolean isActive) {
@@ -197,8 +198,8 @@ public class User extends AbstractEntity {
 			return this;
 		}
 
-		public UserBuilder setWorkItem(WorkItem workItem) {
-			this.workItem = workItem;
+		public UserBuilder setWorkItems(Collection<WorkItem> workItems) {
+			this.workItems = workItems;
 			return this;
 		}
 	}
