@@ -48,12 +48,14 @@ public class User extends AbstractEntity {
     private Date lastModifiedDate;
 
     private User(boolean isActive, String username, String firstName, String lastName, Team team, WorkItem workItem) {
+
 	this.isActive = isActive;
 	this.username = username;
 	this.firstName = firstName;
 	this.lastName = lastName;
 	this.team = team;
 	this.workItem = workItem;
+
     }
 
     protected User() {
