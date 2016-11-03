@@ -2,6 +2,7 @@ package se.plushogskolan.casemanagement.model;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -11,6 +12,9 @@ public final class WorkItem extends AbstractEntity {
 	
     private int userId;
     private String description;
+    
+    @OneToOne
+    private Issue issue;
     
     @ManyToOne
     private Status status;
