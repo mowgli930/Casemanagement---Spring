@@ -1,9 +1,11 @@
 package se.plushogskolan.casemanagement.model;
 
+import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.OneToMany;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -20,6 +22,9 @@ public final class Team extends AbstractEntity {
     private String name;
 
     private boolean active;
+    
+    @OneToMany(mappedBy = "team")
+    private Collection<User> users;
 
     @CreatedBy
     private String createdBy;
@@ -32,10 +37,13 @@ public final class Team extends AbstractEntity {
 
     @LastModifiedDate
     private Date lastModifiedDate;
+    
+    protected Team() {}
 
-    private Team(boolean active, String name) {
+    private Team(boolean active, String name, Collection<User> users) {
 	this.active = active;
 	this.name = name;
+	this.users = users;
     }
 
     public static TeamBuilder builder() {
@@ -80,6 +88,10 @@ public final class Team extends AbstractEntity {
     public String getName() {
 	return name;
     }
+    
+    public Collection<User> getUsers() {
+		return users;
+	}
 
     public String getCreatedBy() {
 	return createdBy;
@@ -115,18 +127,24 @@ public final class Team extends AbstractEntity {
 
     public static final class TeamBuilder {
 	private boolean active = true;
+	private Collection<User> users = null;
 
 	private TeamBuilder() {
 	    super();
 	}
 
 	public Team build(String name) {
-	    return new Team(active, name);
+	    return new Team(active, name, users);
 	}
 
 	public TeamBuilder setActive(boolean active) {
 	    this.active = active;
 	    return this;
+	}
+	
+	public TeamBuilder setUsers(User user){
+		this.users.add(user);
+		return this;
 	}
     }
 }
