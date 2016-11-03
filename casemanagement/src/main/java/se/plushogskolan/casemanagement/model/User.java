@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -25,6 +26,9 @@ public class User extends AbstractEntity {
     @ManyToOne
     private Team team;
 
+    @OneToMany
+    private WorkItem workItem;
+
     private boolean isActive;
 
     private String firstName;
@@ -43,12 +47,13 @@ public class User extends AbstractEntity {
     @LastModifiedDate
     private Date lastModifiedDate;
 
-    private User(boolean isActive, Team team, String username, String firstName, String lastName) {
+    private User(boolean isActive, String username, String firstName, String lastName, Team team, WorkItem workItem) {
 	this.isActive = isActive;
-	this.team = team;
 	this.username = username;
 	this.firstName = firstName;
 	this.lastName = lastName;
+	this.team = team;
+	this.workItem = workItem;
     }
 
     protected User() {
@@ -106,6 +111,10 @@ public class User extends AbstractEntity {
 	return team;
     }
 
+    public WorkItem getWorkItem() {
+	return workItem;
+    }
+
     public String getUsername() {
 	return username;
     }
@@ -151,8 +160,9 @@ public class User extends AbstractEntity {
     }
 
     public static final class UserBuilder {
-	// Optional
-	private Team team = null; // ?? Hur fan ska vi göra här
+
+	private Team team = null;
+	private WorkItem workItem = null;
 	private boolean isActive = true;
 	private String firstName = "";
 	private String lastName = "";
@@ -163,12 +173,7 @@ public class User extends AbstractEntity {
 
 	public User build(String username) {
 
-	    return new User(isActive, team, username, firstName, lastName);
-	}
-
-	public UserBuilder setTeam(Team team) {
-	    this.team = team;
-	    return this;
+	    return new User(isActive, username, firstName, lastName, team, workItem);
 	}
 
 	public UserBuilder setActive(boolean isActive) {
@@ -183,6 +188,16 @@ public class User extends AbstractEntity {
 
 	public UserBuilder setLastName(String lastName) {
 	    this.lastName = lastName;
+	    return this;
+	}
+
+	public UserBuilder setTeam(Team team) {
+	    this.team = team;
+	    return this;
+	}
+
+	public UserBuilder setWorkItem(WorkItem workItem) {
+	    this.workItem = workItem;
 	    return this;
 	}
     }
