@@ -48,7 +48,8 @@ public class User extends AbstractEntity {
 	@LastModifiedDate
 	private Date lastModifiedDate;
 
-	private User(boolean isActive, String username, String firstName, String lastName, Team team, Collection<WorkItem> workItems) {
+	private User(boolean isActive, String username, String firstName, String lastName, Team team,
+			Collection<WorkItem> workItems) {
 
 		this.isActive = isActive;
 		this.username = username;

@@ -19,132 +19,133 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public final class Team extends AbstractEntity {
 
-    private String name;
+	private String name;
 
-    private boolean active;
-    
-    @OneToMany(mappedBy = "team")
-    private Collection<User> users;
+	private boolean active;
 
-    @CreatedBy
-    private String createdBy;
+	@OneToMany(mappedBy = "team")
+	private Collection<User> users;
 
-    @LastModifiedBy
-    private String lastModifiedBy;
+	@CreatedBy
+	private String createdBy;
 
-    @CreatedDate
-    private Date createdDate;
+	@LastModifiedBy
+	private String lastModifiedBy;
 
-    @LastModifiedDate
-    private Date lastModifiedDate;
-    
-    protected Team() {}
+	@CreatedDate
+	private Date createdDate;
 
-    private Team(boolean active, String name, Collection<User> users) {
-	this.active = active;
-	this.name = name;
-	this.users = users;
-    }
+	@LastModifiedDate
+	private Date lastModifiedDate;
 
-    public static TeamBuilder builder() {
-	return new TeamBuilder();
-    }
-
-    @Override
-    public int hashCode() {
-	final int prime = 31;
-	int result = 1;
-	result = prime * result + name.hashCode();
-	return result;
-    }
-
-    @Override
-    public boolean equals(Object other) {
-
-	if (this == other) {
-	    return true;
+	protected Team() {
 	}
 
-	if (null == other) {
-	    return false;
+	private Team(boolean active, String name, Collection<User> users) {
+		this.active = active;
+		this.name = name;
+		this.users = users;
 	}
 
-	if (other instanceof Team) {
-	    Team otherTeam = (Team) other;
-	    return id == otherTeam.getId() && name.equals(otherTeam.getName());
+	public static TeamBuilder builder() {
+		return new TeamBuilder();
 	}
-	return false;
-    }
 
-    @Override
-    public String toString() {
-	return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + name.hashCode();
+		return result;
+	}
 
-    public boolean isActive() {
-	return active;
-    }
+	@Override
+	public boolean equals(Object other) {
 
-    public String getName() {
-	return name;
-    }
-    
-    public Collection<User> getUsers() {
+		if (this == other) {
+			return true;
+		}
+
+		if (null == other) {
+			return false;
+		}
+
+		if (other instanceof Team) {
+			Team otherTeam = (Team) other;
+			return id == otherTeam.getId() && name.equals(otherTeam.getName());
+		}
+		return false;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Collection<User> getUsers() {
 		return users;
 	}
 
-    public String getCreatedBy() {
-	return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-	this.createdBy = createdBy;
-    }
-
-    public String getLastModifiedBy() {
-	return lastModifiedBy;
-    }
-
-    public void setLastModifiedBy(String lastModifiedBy) {
-	this.lastModifiedBy = lastModifiedBy;
-    }
-
-    public Date getCreatedDate() {
-	return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-	this.createdDate = createdDate;
-    }
-
-    public Date getLastModifiedDate() {
-	return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(Date lastModifiedDate) {
-	this.lastModifiedDate = lastModifiedDate;
-    }
-
-    public static final class TeamBuilder {
-	private boolean active = true;
-	private Collection<User> users = null;
-
-	private TeamBuilder() {
-	    super();
+	public String getCreatedBy() {
+		return createdBy;
 	}
 
-	public Team build(String name) {
-	    return new Team(active, name, users);
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
 	}
 
-	public TeamBuilder setActive(boolean active) {
-	    this.active = active;
-	    return this;
+	public String getLastModifiedBy() {
+		return lastModifiedBy;
 	}
-	
-	public TeamBuilder setUsers(User user){
-		this.users.add(user);
-		return this;
+
+	public void setLastModifiedBy(String lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
 	}
-    }
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public Date getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(Date lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
+
+	public static final class TeamBuilder {
+		private boolean active = true;
+		private Collection<User> users = null;
+
+		private TeamBuilder() {
+			super();
+		}
+
+		public Team build(String name) {
+			return new Team(active, name, users);
+		}
+
+		public TeamBuilder setActive(boolean active) {
+			this.active = active;
+			return this;
+		}
+
+		public TeamBuilder setUsers(User user) {
+			this.users.add(user);
+			return this;
+		}
+	}
 }
