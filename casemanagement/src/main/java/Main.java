@@ -1,12 +1,9 @@
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 
+import se.plushogskolan.casemanagement.model.Issue;
 import se.plushogskolan.casemanagement.model.Team;
-import se.plushogskolan.casemanagement.model.User;
 import se.plushogskolan.casemanagement.model.WorkItem;
 import se.plushogskolan.casemanagement.repository.IssueRepository;
 import se.plushogskolan.casemanagement.repository.TeamRepository;
@@ -26,14 +23,22 @@ public class Main {
 			WorkItemRepository workItemRepository = context.getBean(WorkItemRepository.class);
 			IssueRepository issueRepository = context.getBean(IssueRepository.class);
 			Team team = Team.builder().setActive(true).build("theTeam");
+			Issue issue = Issue.builder(null).setDescription("someone else fucked up").build();
+			issue = issueRepository.save(issue);
+			
 			WorkItem workItem = WorkItem.builder().setDescription("heheh").setStatus(WorkItem.Status.DONE)
-					.build();
-			Collection<WorkItem> workItems = Arrays.asList(workItem);
-			User user = User.builder().setActive(true).setFirstName("Analking").setLastName("Skywalker")
-					.setTeam(team).setWorkItems(workItems).build("username");
-			userRepository.save(user);
-			Page<User> result = userRepository.findAll(new PageRequest(0, 5));
-			result.forEach(System.out::println);
+					.setIssue(issue).build();
+			workItemRepository.save(workItem);
+			
+			Slice<WorkItem> workItems = workItemRepository.getWorkItemsWithIssue(new PageRequest(0, 10));
+			workItems.forEach(wi -> System.out.println(wi.getId()));
+//			Collection<WorkItem> workItems = Arrays.asList(workItem);
+//			User user = User.builder().setActive(true).setFirstName("Analking").setLastName("Skywalker")
+//					.setTeam(team).setWorkItems(workItems).build("username");
+//			userRepository.save(user);
+//			
+//			Page<User> result = userRepository.findAll(new PageRequest(0, 5));
+//			result.forEach(System.out::println);
 		}
 	
 	}

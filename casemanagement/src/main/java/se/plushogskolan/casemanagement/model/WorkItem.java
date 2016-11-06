@@ -28,8 +28,9 @@ public final class WorkItem extends AbstractEntity {
 	protected WorkItem() {
 	}
 
-	private WorkItem(int userId, String description, Status status) {
+	private WorkItem(int userId, Issue issue, String description, Status status) {
 		this.userId = userId;
+		this.issue = issue;
 		this.description = description;
 		this.status = status;
 	}
@@ -67,6 +68,10 @@ public final class WorkItem extends AbstractEntity {
 	public int getUserId() {
 		return userId;
 	}
+	
+	public Issue getIssue() {
+		return issue;
+	}
 
 	public String getDescription() {
 		return description;
@@ -78,6 +83,7 @@ public final class WorkItem extends AbstractEntity {
 
 	public static final class WorkItemBuilder {
 		private int userId = 0;
+		private Issue issue = null;
 		private String description = "";
 		private Status status = Status.UNSTARTED;
 
@@ -91,6 +97,10 @@ public final class WorkItem extends AbstractEntity {
 			return this;
 		}
 
+		public WorkItemBuilder setIssue(Issue issue) {
+			this.issue = issue;
+			return this;
+		}
 		public WorkItemBuilder setDescription(String description) {
 			this.description = description;
 			return this;
@@ -119,7 +129,7 @@ public final class WorkItem extends AbstractEntity {
 		}
 
 		public WorkItem build() {
-			return new WorkItem(userId, description, status);
+			return new WorkItem(userId, issue, description, status);
 		}
 
 	}
