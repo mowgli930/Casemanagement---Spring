@@ -2,6 +2,8 @@ package se.plushogskolan.casemanagement.service;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,7 +22,7 @@ import se.plushogskolan.casemanagement.repository.UserRepository;
 import se.plushogskolan.casemanagement.repository.WorkItemRepository;
 
 @Service
-public final class CaseService {
+public class CaseService {
 
 	private final UserRepository userRepository;
 	private final TeamRepository teamRepository;
@@ -47,22 +49,29 @@ public final class CaseService {
 		}
 	}
 
-	public void updateUserFirstName(int userId, String firstName) {
-
-		try {
-			User userToUpdate = userRepository.getUserById(userId);
-			User updatedUser = User.builder().setFirstName(firstName).setLastName(userToUpdate.getLastName())
-					.setTeamId(userToUpdate.getTeamId()).setActive(userToUpdate.isActive()).setId(userToUpdate.getId())
-					.build(userToUpdate.getUsername());
-
-			userRepository.updateUser(updatedUser);
-
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not update user with id: " + userId + ", new first name: " + firstName,
-					e);
+	@Transactional
+	public void updateUserFirstName(Long userId, String firstName) {
+		
+		if(userRepository.exists(userId)){
+			userRepository.updateUserFirstName(userId, firstName);
+		}else{
+			throw new ServiceException("Object doesnt exist :" +  userId);
 		}
 		
-		if()
+//		try {
+//			
+//			
+//			User userToUpdate = userRepository.findOne(userId);
+//			User updatedUser = User.builder().setFirstName(firstName).setLastName(userToUpdate.getLastName())
+//					.setTeamId(userToUpdate.getTeamId()).setActive(userToUpdate.isActive()).setId(userToUpdate.getId())
+//					.build(userToUpdate.getUsername());
+//
+//			userRepository.updateUser(updatedUser);
+//
+//		} catch (RepositoryException e) {
+//			throw new ServiceException("Could not update user with id: " + userId + ", new first name: " + firstName,
+//					e);
+//		}
 	}
 
 	public void updateUserLastName(int userId, String lastName) {
