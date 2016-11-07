@@ -1,17 +1,5 @@
-import java.util.Arrays;
-
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
 
-import se.plushogskolan.casemanagement.model.Issue;
-import se.plushogskolan.casemanagement.model.Team;
-import se.plushogskolan.casemanagement.model.User;
-import se.plushogskolan.casemanagement.model.WorkItem;
-import se.plushogskolan.casemanagement.repository.IssueRepository;
-import se.plushogskolan.casemanagement.repository.TeamRepository;
-import se.plushogskolan.casemanagement.repository.UserRepository;
-import se.plushogskolan.casemanagement.repository.WorkItemRepository;
 import se.plushogskolan.casemanagement.service.CaseService;
 
 public class Main {

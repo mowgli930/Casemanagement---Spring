@@ -5,7 +5,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -15,26 +14,25 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-//@EntityListeners(AuditingEntityListener.class)
+// @EntityListeners(AuditingEntityListener.class)
 public class User extends AbstractEntity {
 
 	@Column(unique = true)
 	private String username;
 
 	@ManyToOne
-	private Team team;
+	private Team team = null;
 
 	@OneToMany(mappedBy = "user")
-	private Collection<WorkItem> workItems;
+	private Collection<WorkItem> workItems = null;
 
-	private boolean isActive;
+	private boolean isActive = true;
 
-	private String firstName;
+	private String firstName= "";
 
-	private String lastName;
+	private String lastName = "";
 
 	@CreatedBy
 	private String createdBy;
@@ -47,23 +45,12 @@ public class User extends AbstractEntity {
 
 	@LastModifiedDate
 	private Date lastModifiedDate;
-
-	private User(boolean isActive, String username, String firstName, String lastName, Team team,
-			Collection<WorkItem> workItems) {
-
-		this.isActive = isActive;
+	
+	public User(String username){
 		this.username = username;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.team = team;
-		this.workItems = workItems;
 	}
 
 	protected User() {
-	}
-
-	public static UserBuilder builder() {
-		return new UserBuilder();
 	}
 
 	public boolean isIdentical(Object other) {
@@ -161,47 +148,35 @@ public class User extends AbstractEntity {
 	public void setLastModifiedDate(Date lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
 	}
-
-	public static final class UserBuilder {
-
-		private Team team = null;
-		private Collection<WorkItem> workItems = null;
-		private boolean isActive = true;
-		private String firstName = "";
-		private String lastName = "";
-
-		private UserBuilder() {
-			super();
-		}
-
-		public User build(String username) {
-
-			return new User(isActive, username, firstName, lastName, team, workItems);
-		}
-
-		public UserBuilder setActive(boolean isActive) {
-			this.isActive = isActive;
-			return this;
-		}
-
-		public UserBuilder setFirstName(String firstName) {
-			this.firstName = firstName;
-			return this;
-		}
-
-		public UserBuilder setLastName(String lastName) {
-			this.lastName = lastName;
-			return this;
-		}
-
-		public UserBuilder setTeam(Team team) {
-			this.team = team;
-			return this;
-		}
-
-		public UserBuilder setWorkItems(Collection<WorkItem> workItems) {
-			this.workItems = workItems;
-			return this;
-		}
+	
+	public User setFirstName(String firstName) {
+		this.firstName = firstName;
+		return this;
 	}
+	
+	public User setLastName(String lastName) {
+		this.lastName = lastName;
+		return this;
+	}
+	
+	public User setUsername(String username) {
+		this.username = username;
+		return this;
+	}
+	
+	public User setTeam(Team team) {
+		this.team = team;
+		return this;
+	}
+	
+	public User setActive(boolean isActive) {
+		this.isActive = isActive;
+		return this;
+	}
+	
+	public User setWorkItems(Collection<WorkItem> workItems) {
+		this.workItems = workItems;
+		return this;
+	}
+
 }
