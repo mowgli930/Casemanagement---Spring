@@ -38,14 +38,13 @@ public final class CaseService {
 
 	// USER
 
-	public User saveUser(User user) {
+	public User save(User user) {
 
 		if (userFillsRequirements(user) && isPersistedObject(user)) {
 			return userRepository.save(user);
 		} else {
 			throw new ServiceException("Username too short, team is full or object already exists" + user.toString());
 		}
-
 	}
 
 	public void updateUserFirstName(int userId, String firstName) {
@@ -62,6 +61,8 @@ public final class CaseService {
 			throw new ServiceException("Could not update user with id: " + userId + ", new first name: " + firstName,
 					e);
 		}
+		
+		if()
 	}
 
 	public void updateUserLastName(int userId, String lastName) {
