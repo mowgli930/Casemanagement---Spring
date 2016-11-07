@@ -10,7 +10,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @Entity
 public final class WorkItem extends AbstractEntity {
 
-	private int userId;
 	private String description;
 
 	@ManyToOne
@@ -28,8 +27,8 @@ public final class WorkItem extends AbstractEntity {
 	protected WorkItem() {
 	}
 
-	private WorkItem(int userId, Issue issue, String description, Status status) {
-		this.userId = userId;
+	private WorkItem(User user, Issue issue, String description, Status status) {
+		this.user = user;
 		this.issue = issue;
 		this.description = description;
 		this.status = status;
@@ -51,7 +50,7 @@ public final class WorkItem extends AbstractEntity {
 		}
 		if (obj instanceof WorkItem) {
 			WorkItem otherWorkItem = (WorkItem) obj;
-			return userId == otherWorkItem.userId && description.equals(otherWorkItem.description)
+			return user == otherWorkItem.user && description.equals(otherWorkItem.description)
 					&& status.equals(otherWorkItem.status);
 		}
 		return false;
@@ -60,13 +59,13 @@ public final class WorkItem extends AbstractEntity {
 	@Override
 	public int hashCode() {
 		int result = 17;
-		result += 31 * userId;
+		result += 31 * user.hashCode();
 		result += 31 * description.hashCode();
 		return result;
 	}
 
-	public int getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
 	}
 	
 	public Issue getIssue() {
@@ -82,7 +81,7 @@ public final class WorkItem extends AbstractEntity {
 	}
 
 	public static final class WorkItemBuilder {
-		private int userId = 0;
+		private User user = null;
 		private Issue issue = null;
 		private String description = "";
 		private Status status = Status.UNSTARTED;
@@ -92,8 +91,8 @@ public final class WorkItem extends AbstractEntity {
 			;
 		}
 
-		public WorkItemBuilder setUserId(int userId) {
-			this.userId = userId;
+		public WorkItemBuilder setUser(User user) {
+			this.user = user;
 			return this;
 		}
 
@@ -129,7 +128,7 @@ public final class WorkItem extends AbstractEntity {
 		}
 
 		public WorkItem build() {
-			return new WorkItem(userId, issue, description, status);
+			return new WorkItem(user, issue, description, status);
 		}
 
 	}
