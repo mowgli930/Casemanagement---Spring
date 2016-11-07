@@ -55,27 +55,18 @@ public class CaseService {
 
 	@Transactional
 	public void updateUserFirstName(Long userId, String firstName) {
-		
-		if(userRepository.exists(userId)){
-			userRepository.updateUserFirstName(userId, firstName);
-		}else{
-			throw new ServiceException("Object doesnt exist :" +  userId);
+
+		if (userRepository.exists(userId)) {
+
+			User user = userRepository.findOne(userId);
+
+			user.setFirstName(firstName);
+
+			userRepository.save(user);
+
+		} else {
+			throw new ServiceException("Object doesnt exist :" + userId);
 		}
-		
-//		try {
-//			
-//			
-//			User userToUpdate = userRepository.findOne(userId);
-//			User updatedUser = User.builder().setFirstName(firstName).setLastName(userToUpdate.getLastName())
-//					.setTeamId(userToUpdate.getTeamId()).setActive(userToUpdate.isActive()).setId(userToUpdate.getId())
-//					.build(userToUpdate.getUsername());
-//
-//			userRepository.updateUser(updatedUser);
-//
-//		} catch (RepositoryException e) {
-//			throw new ServiceException("Could not update user with id: " + userId + ", new first name: " + firstName,
-//					e);
-//		}
 	}
 
 	public void updateUserLastName(int userId, String lastName) {
