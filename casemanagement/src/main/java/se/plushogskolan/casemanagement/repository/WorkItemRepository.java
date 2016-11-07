@@ -18,8 +18,8 @@ public interface WorkItemRepository extends PagingAndSortingRepository<WorkItem,
 //   
 //	Slice<WorkItem> getWorkItemsByTeamId(Long teamId, Pageable pageable);
 	
-	@Query("SELECT wi FROM #{#entityName} wi WHERE wi.user.id = :id")
-	Slice<WorkItem> getWorkItemsByUserId(@Param("id") Long userId, Pageable pageable);
+	@Query("SELECT wi FROM #{#entityName} wi WHERE wi.user.id = :userId")
+	Slice<WorkItem> getWorkItemsByUserId(@Param("userId") Long userId, Pageable pageable);
 	
 	@Query("SELECT wi FROM #{#entityName} wi WHERE wi.issue IS NOT NULL")
 	Slice<WorkItem> getWorkItemsWithIssue(Pageable pageable);
