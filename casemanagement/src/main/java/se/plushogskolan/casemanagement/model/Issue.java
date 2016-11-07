@@ -38,14 +38,9 @@ public final class Issue extends AbstractEntity {
 	protected Issue() {
 	}
 
-	private Issue(WorkItem workItem, String description) {
-
+	public Issue(WorkItem workItem, String description) {
 		this.workItem = workItem;
 		this.description = description;
-	}
-
-	public static IssueBuilder builder(WorkItem workItem) {
-		return new IssueBuilder(workItem);
 	}
 
 	@Override
@@ -76,9 +71,19 @@ public final class Issue extends AbstractEntity {
 	public WorkItem getWorkitem() {
 		return workItem;
 	}
+	
+	public Issue setWorkItem(WorkItem workItem) {
+		this.workItem = workItem;
+		return this;
+	}
 
 	public String getDescription() {
 		return description;
+	}
+	
+	public Issue setDescription(String description) {
+		this.description = description;
+		return this;
 	}
 
 	public String getCreatedBy() {
@@ -111,27 +116,5 @@ public final class Issue extends AbstractEntity {
 
 	public void setLastModifiedDate(Date lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
-	}
-
-	public static final class IssueBuilder {
-		private WorkItem workItem;
-		private String description = "";
-
-		private IssueBuilder(WorkItem workItem) {
-			this.workItem = workItem;
-		}
-
-		public IssueBuilder setId() {
-			return this;
-		}
-
-		public IssueBuilder setDescription(String description) {
-			this.description = description;
-			return this;
-		}
-
-		public Issue build() {
-			return new Issue(workItem, description);
-		}
 	}
 }
