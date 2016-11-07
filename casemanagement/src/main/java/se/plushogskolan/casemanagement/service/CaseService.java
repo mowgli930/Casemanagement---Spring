@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import se.plushogskolan.casemanagement.exception.RepositoryException;
 import se.plushogskolan.casemanagement.exception.ServiceException;
 import se.plushogskolan.casemanagement.model.AbstractEntity;
 import se.plushogskolan.casemanagement.model.Issue;
@@ -66,38 +65,33 @@ public class CaseService {
 		}
 	}
 
-	public void updateUserLastName(int userId, String lastName) {
+	@Transactional
+	public void updateUserLastName(Long userId, String lastName) {
 
-		try {
-			User userToUpdate = userRepository.getUserById(userId);
-			User updatedUser = User.builder().setFirstName(userToUpdate.getFirstName()).setLastName(lastName)
-					.setTeamId(userToUpdate.getTeamId()).setActive(userToUpdate.isActive()).setId(userToUpdate.getId())
-					.build(userToUpdate.getUsername());
+		if (userRepository.exists(userId)) {
+			User user = userRepository.findOne(userId);
 
-			userRepository.updateUser(updatedUser);
+			user.setLastName(lastName);
 
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not update user with id: " + userId + ", new last name: " + lastName, e);
+			userRepository.save(user);
+
+		} else {
+			throw new ServiceException("Could not update user with id: " + userId + ", new last name: " + lastName);
 		}
 	}
 
-	public void updateUserUsername(int userId, String username) {
+	public void updateUserUsername(Long userId, String username) {
 
-		try {
-			User userToUpdate = userRepository.getUserById(userId);
-			User updatedUser = User.builder().setFirstName(userToUpdate.getFirstName())
-					.setLastName(userToUpdate.getLastName()).setTeamId(userToUpdate.getTeamId())
-					.setActive(userToUpdate.isActive()).setId(userToUpdate.getId()).build(username);
-
-			if (usernameLongEnough(username)) {
-				userRepository.updateUser(updatedUser);
+			if (usernameLongEnough(username) && userRepository.exists(userId)) {
+				
+				User user = userRepository.findOne(userId);
+				
+				user.setUsername(username);
+				
+				userRepository.save(user);
 			} else {
 				throw new ServiceException("Username not long enough. Username was " + username);
 			}
-
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not update user with id: " + userId + ", new username: " + username, e);
-		}
 	}
 
 	public void inactivateUserById(int userId) {
