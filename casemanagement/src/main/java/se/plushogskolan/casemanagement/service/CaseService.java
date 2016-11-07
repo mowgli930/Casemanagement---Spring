@@ -335,7 +335,7 @@ public class CaseService {
 		return username.length() >= 10;
 	}
 
-	private boolean teamHasSpaceForUser(int teamId, int userId) throws RepositoryException {
+	private boolean teamHasSpaceForUser(Long teamId, Long userId) throws RepositoryException {
 
 		if (teamId == 0) {
 			return true;
@@ -343,12 +343,12 @@ public class CaseService {
 		return numberOfUsersInTeamLessThanTen(teamId);
 	}
 
-	private boolean numberOfUsersInTeamLessThanTen(int teamId) throws RepositoryException {
+	private boolean numberOfUsersInTeamLessThanTen(Long teamId) throws RepositoryException {
 		List<User> users = userRepository.getUsersByTeamId(teamId);
 		return users.size() < 10;
 	}
 
-	private void setStatusOfAllWorkItemsOfUserToUnstarted(int userId) throws RepositoryException {
+	private void setStatusOfAllWorkItemsOfUserToUnstarted(Long userId) throws RepositoryException {
 
 		List<WorkItem> workItems = workItemRepository.getWorkItemsByUserId(userId);
 		for (WorkItem workItem : workItems) {
@@ -356,13 +356,13 @@ public class CaseService {
 		}
 	}
 
-	private boolean userIsActive(int userId) throws RepositoryException {
+	private boolean userIsActive(Long userId) throws RepositoryException {
 
 		User user = userRepository.getUserById(userId);
 		return user.isActive();
 	}
 
-	private boolean userHasSpaceForAdditionalWorkItem(int workItemId, int userId) throws RepositoryException {
+	private boolean userHasSpaceForAdditionalWorkItem(Long workItemId, Long userId) throws RepositoryException {
 
 		List<WorkItem> workItems = workItemRepository.getWorkItemsByUserId(userId);
 
@@ -382,7 +382,7 @@ public class CaseService {
 		return WorkItem.Status.DONE.equals(workItem.getStatus());
 	}
 
-	private void cleanRelatedDataOnWorkItemDelete(int workItemId) throws RepositoryException {
+	private void cleanRelatedDataOnWorkItemDelete(Long workItemId) throws RepositoryException {
 		for (Issue issue : issueRepository.getIssuesByWorkItemId(workItemId))
 			issueRepository.removeById(issue.getId());
 	}
