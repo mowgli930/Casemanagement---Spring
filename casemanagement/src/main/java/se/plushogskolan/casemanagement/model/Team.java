@@ -41,14 +41,9 @@ public final class Team extends AbstractEntity {
 	protected Team() {
 	}
 
-	private Team(boolean active, String name, Collection<User> users) {
-		this.active = active;
+	public Team(String name) {
+		this.active = true;
 		this.name = name;
-		this.users = users;
-	}
-
-	public static TeamBuilder builder() {
-		return new TeamBuilder();
 	}
 
 	@Override
@@ -85,15 +80,25 @@ public final class Team extends AbstractEntity {
 	public boolean isActive() {
 		return active;
 	}
+	
+	public Team setActive(boolean active) {
+		this.active = active;
+		return this;
+	}
 
 	public String getName() {
 		return name;
+	}
+	
+	public Team setName(String name) {
+		this.name = name;
+		return this;
 	}
 
 	public Collection<User> getUsers() {
 		return users;
 	}
-
+	
 	public String getCreatedBy() {
 		return createdBy;
 	}
@@ -124,28 +129,5 @@ public final class Team extends AbstractEntity {
 
 	public void setLastModifiedDate(Date lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
-	}
-
-	public static final class TeamBuilder {
-		private boolean active = true;
-		private Collection<User> users = null;
-
-		private TeamBuilder() {
-			super();
-		}
-
-		public Team build(String name) {
-			return new Team(active, name, users);
-		}
-
-		public TeamBuilder setActive(boolean active) {
-			this.active = active;
-			return this;
-		}
-
-		public TeamBuilder setUsers(User user) {
-			this.users.add(user);
-			return this;
-		}
 	}
 }
