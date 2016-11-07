@@ -39,7 +39,7 @@ public class Main {
 //			Collection<WorkItem> workItems = Arrays.asList(workItem);
 			User user = User.builder().setActive(true).setFirstName("Analking").setLastName("Skywalker")
 					.setTeam(team).setWorkItems(Arrays.asList(workItem)).build("username2");
-			userRepository.save(user);
+			workItemRepository.save(workItem);
 			
 			
 //			Page<User> result = userRepository.findAll(new PageRequest(0, 5));
