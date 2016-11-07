@@ -16,6 +16,7 @@ import se.plushogskolan.casemanagement.model.Issue;
 import se.plushogskolan.casemanagement.model.Team;
 import se.plushogskolan.casemanagement.model.User;
 import se.plushogskolan.casemanagement.model.WorkItem;
+import se.plushogskolan.casemanagement.model.WorkItem.Status;
 import se.plushogskolan.casemanagement.repository.IssueRepository;
 import se.plushogskolan.casemanagement.repository.TeamRepository;
 import se.plushogskolan.casemanagement.repository.UserRepository;
@@ -278,9 +279,12 @@ public class CaseService {
 	// TODO finish method when workItem is done
 	public void saveIssue(Issue issue) {
 		try {
-			if (true/* workItemIsDone(issue.getWorkitem().getId()) */) {
+			if (workItemIsDone(issue.getWorkitem().getId())) {
+				issue.setWorkItem(issue.getWorkitem().setStatus(Status.UNSTARTED));
 				issueRepository.save(issue);
-				workItemRepository.updateStatusById(issue.getWorkitem().getId(), WorkItem.Status.UNSTARTED);
+				WorkItem workItem = workItemRepository.findOne(issue.getWorkitem().getId());
+				workItem.setStatus(Status.UNSTARTED);
+				workItemRepository.save(workItem);
 			} else {
 				throw new ServiceException("WorkItem does not have status done");
 			}
@@ -289,34 +293,14 @@ public class CaseService {
 		}
 	}
 
+	@Transactional
 	public void updateIssueDescription(Long issueId, String description) {
 		try {
-			Issue issueToUpdate = issueRepository.findById(issueId);
-			Issue updatedIssue = Issue.builder(issueToUpdate.getWorkitem()).setDescription(description).build();
-			issueRepository.save(updatedIssue);
+			Issue issue = issueRepository.findById(issueId);
+			issue.setDescription(description);
+			issueRepository.save(issue);
 		} catch (Exception e) {
 			throw new ServiceException("Could not change description of issue with id: " + issueId, e);
-		}
-	}
-
-	// TODO Fix method when Workitem is done
-	public void assignIssueToWorkItem(Long issueId, Long workItemId) {
-
-		try {
-			if (workItemIsDone(workItemId)) {
-				Issue issueToUpdate = issueRepository.findById(issueId);
-				Issue updatedIssue = Issue.builder(workItemRepository.findOne(workItemId))
-						.setDescription(issueToUpdate.getDescription()).build();
-				issueRepository.save(updatedIssue);
-				// workItemRepository.updateStatusById(workItemId,
-				// WorkItem.Status.UNSTARTED);
-			} else {
-				throw new ServiceException("WorkItem does not have status done");
-			}
-		} catch (RepositoryException e) {
-			throw new ServiceException(
-					"Could not assign new work item to Issue with id " + issueId + " and work item id " + workItemId,
-					e);
 		}
 	}
 
