@@ -38,10 +38,6 @@ public class CaseService {
 		this.issueRepository = issueRepository;
 	}
 
-	@Transactional
-	public void test(Long workItemId, Long userId) {
-		workItemRepository.addWorkItemToUser(workItemId, userId);
-	}
 	// USER
 
 	public User save(User user) {
