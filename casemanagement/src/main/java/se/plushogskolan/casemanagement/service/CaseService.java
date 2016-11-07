@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import se.plushogskolan.casemanagement.exception.RepositoryException;
 import se.plushogskolan.casemanagement.exception.ServiceException;
 import se.plushogskolan.casemanagement.model.AbstractEntity;
 import se.plushogskolan.casemanagement.model.Issue;
