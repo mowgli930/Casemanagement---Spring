@@ -40,14 +40,14 @@ public class CaseService {
 
 	// USER
 
-	public User save(User user) {
-
-		if (userFillsRequirements(user) && isPersistedObject(user)) {
-			return userRepository.save(user);
-		} else {
-			throw new ServiceException("Username too short, team is full or object already exists" + user.toString());
-		}
-	}
+//	public User save(User user) {
+//
+//		if (userFillsRequirements(user) && isPersistedObject(user)) {
+//			return userRepository.save(user);
+//		} else {
+//			throw new ServiceException("Username too short, team is full or object already exists" + user.toString());
+//		}
+//	}
 
 	@Transactional
 	public void updateUserFirstName(Long userId, String firstName) {
@@ -82,293 +82,317 @@ public class CaseService {
 
 	public void updateUserUsername(Long userId, String username) {
 
-			if (usernameLongEnough(username) && userRepository.exists(userId)) {
-				
-				User user = userRepository.findOne(userId);
-				
-				user.setUsername(username);
-				
-				userRepository.save(user);
-			} else {
-				throw new ServiceException("Username not long enough. Username was " + username);
-			}
-	}
+		if (usernameLongEnough(username) && userRepository.exists(userId)) {
 
-	public void inactivateUserById(int userId) {
+			User user = userRepository.findOne(userId);
 
-		try {
-			userRepository.inactivateUserById(userId);
-			setStatusOfAllWorkItemsOfUserToUnstarted(userId);
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not inactivate User with id " + userId, e);
+			user.setUsername(username);
+
+			userRepository.save(user);
+		} else {
+			throw new ServiceException("Username not long enough. Username was " + username);
 		}
 	}
 
-	public void activateUserById(int userId) {
-		try {
-			userRepository.activateUserById(userId);
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not activate User with id " + userId, e);
-		}
-	}
+//	public void inactivateUserById(int userId) {
+//
+//		try {
+//			userRepository.inactivateUserById(userId);
+//			setStatusOfAllWorkItemsOfUserToUnstarted(userId);
+//		} catch (RepositoryException e) {
+//			throw new ServiceException("Could not inactivate User with id " + userId, e);
+//		}
+//	}
+//
+//	public void activateUserById(int userId) {
+//		try {
+//			userRepository.activateUserById(userId);
+//		} catch (RepositoryException e) {
+//			throw new ServiceException("Could not activate User with id " + userId, e);
+//		}
+//	}
+//
+//	public User getUserById(int userId) {
+//		try {
+//			return userRepository.getUserById(userId);
+//		} catch (RepositoryException e) {
+//			throw new ServiceException("Could not get User by id " + userId, e);
+//		}
+//	}
+//
+//	public List<User> searchUsersBy(String firstName, String lastName, String username) {
+//		try {
+//			return userRepository.searchUsersBy(firstName, lastName, username);
+//		} catch (RepositoryException e) {
+//			throw new ServiceException("Could not get User by first name, last name, username.", e);
+//		}
+//	}
+//
+//	public List<User> getUsersByTeamId(int teamId) {
+//		try {
+//			return userRepository.getUsersByTeamId(teamId);
+//		} catch (RepositoryException e) {
+//			throw new ServiceException("Could not get User by TeamId, teamId=" + teamId, e);
+//		}
+//	}
+//
+//	// TEAM
 
-	public User getUserById(int userId) {
+	@Transactional
+	public Team saveTeam(Team team) {
 		try {
-			return userRepository.getUserById(userId);
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not get User by id " + userId, e);
-		}
-	}
-
-	public List<User> searchUsersBy(String firstName, String lastName, String username) {
-		try {
-			return userRepository.searchUsersBy(firstName, lastName, username);
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not get User by first name, last name, username.", e);
-		}
-	}
-
-	public List<User> getUsersByTeamId(int teamId) {
-		try {
-			return userRepository.getUsersByTeamId(teamId);
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not get User by TeamId, teamId=" + teamId, e);
-		}
-	}
-
-	// TEAM
-
-	public void saveTeam(Team team) {
-		try {
-			teamRepository.save(team);
+			return teamRepository.save(team);
 		} catch (Exception e) {
 			throw new ServiceException("Could not save Team: " + team.toString(), e);
 		}
 	}
-
-	public void updateTeam(Team newValues) {
+	@Transactional
+	public Team updateTeam(Long teamId, Team newValues) {
 		try {
-			teamRepository.save(newValues);
+			Team team = teamRepository.findOne(teamId);
+			team.setActive(newValues.isActive()).setName(newValues.getName());
+			return teamRepository.save(team);
 		} catch (Exception e) {
 			throw new ServiceException("Could not update Team with id " + newValues.getId(), e);
 		}
 	}
 
-	public void inactivateTeam(int teamId) {
+	@Transactional
+	public Team inactivateTeam(Long teamId) {
 		try {
-			teamRepository.inactivateTeam(teamId);
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not inactivate Team with id \"" + teamId, e);
-		}
-	}
-
-	public void activateTeam(int teamId) {
-		try {
-			teamRepository.activateTeam(teamId);
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not activate Team with id \"" + teamId, e);
-		}
-	}
-
-	public List<Team> getAllTeams() {
-		try {
-			return teamRepository.getAllTeams();
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not get all Teams", e);
-		}
-	}
-
-	public void addUserToTeam(int userId, int teamId) {
-		try {
-			if (teamHasSpaceForUser(teamId, userId)) {
-				teamRepository.addUserToTeam(userId, teamId);
-			} else {
-				throw new ServiceException("No space in team for user. userId = " + userId + "teamId = " + teamId);
-			}
-		} catch (RepositoryException e) {
-			throw new ServiceException(
-					"Could not add User with id \"" + userId + "\" to Team with id \"" + teamId + "\".", e);
-		}
-	}
-
-	// WORKITEM
-
-	public void saveWorkItem(WorkItem workItem) {
-		try {
-			workItemRepository.saveWorkItem(workItem);
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not save workItem: " + workItem.toString(), e);
-		}
-	}
-
-	public void updateStatusById(int workItemId, WorkItem.Status workItemStatus) {
-		try {
-			workItemRepository.updateStatusById(workItemId, workItemStatus);
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not update status to: \"" + workItemStatus.toString()
-					+ "\" on WorkItem with id: " + workItemId, e);
-		}
-	}
-
-	public void deleteWorkItem(int workItemId) {
-
-		try {
-			workItemRepository.deleteWorkItemById(workItemId);
-
-			cleanRelatedDataOnWorkItemDelete(workItemId);
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not delete WorkItem with id: " + workItemId, e);
-		}
-	}
-
-	public void addWorkItemToUser(int workItemId, int userId) {
-
-		try {
-			if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId, userId)) {
-				workItemRepository.addWorkItemToUser(workItemId, userId);
-			} else {
-				throw new ServiceException("Could not add work item to user, "
-						+ "either user is inactive or there is no space for additional work items");
-			}
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not add WorkItem " + workItemId + " to User " + userId, e);
-		}
-
-	}
-
-	public List<WorkItem> getWorkItemsByStatus(WorkItem.Status workItemStatus) {
-		try {
-			return workItemRepository.getWorkItemsByStatus(workItemStatus);
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not WorkItems with status " + workItemStatus, e);
-		}
-	}
-
-	public List<WorkItem> getWorkItemsByTeamId(int teamId) {
-		try {
-			return workItemRepository.getWorkItemsByTeamId(teamId);
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not get WorkItem connected to Team id " + teamId, e);
-		}
-	}
-
-	public List<WorkItem> getWorkItemsByUserId(int userId) {
-		try {
-			return workItemRepository.getWorkItemsByUserId(userId);
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not WorkItem connected to User id " + userId, e);
-		}
-	}
-
-	public List<WorkItem> getWorkItemsWithIssue() {
-		try {
-			return workItemRepository.getWorkItemsWithIssue();
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not WorkItems with Issues", e);
-		}
-	}
-
-	// ISSUE
-
-	// TODO finish method when workItem is done
-	public void saveIssue(Issue issue) {
-		try {
-			if (workItemIsDone(issue.getWorkitem().getId())) {
-				issue.setWorkItem(issue.getWorkitem().setStatus(Status.UNSTARTED));
-				issueRepository.save(issue);
-				WorkItem workItem = workItemRepository.findOne(issue.getWorkitem().getId());
-				workItem.setStatus(Status.UNSTARTED);
-				workItemRepository.save(workItem);
-			} else {
-				throw new ServiceException("WorkItem does not have status done");
-			}
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not save Issue " + issue, e);
+			Team team = teamRepository.findOne(teamId);
+			team.setActive(false);
+			return teamRepository.save(team);
+		} catch (Exception e) {
+			throw new ServiceException("Could not inactivate Team with id: " + teamId, e);
 		}
 	}
 
 	@Transactional
-	public void updateIssueDescription(Long issueId, String description) {
+	public Team activateTeam(Long teamId) {
+		try {
+			Team team = teamRepository.findOne(teamId);
+			team.setActive(true);
+			return teamRepository.save(team);
+		} catch (Exception e) {
+			throw new ServiceException("Could not activate Team with id: " + teamId, e);
+		}
+	}
+
+	public Page<Team> getAllTeams(int page, int size) {
+		try {
+			Page<Team> teams = (Page<Team>) teamRepository.findAll(new PageRequest(page, size));
+			return teams;
+		} catch (Exception e) {
+			throw new ServiceException("Could not retriev all Teams", e);
+		}
+	}
+	
+	@Transactional
+	public void addUserToTeam(Long userId, Long teamId) {
+		try {
+			if (teamHasSpaceForUser(teamId, userId)) {
+				Team team = teamRepository.findOne(teamId);
+				User user = userRepository.findOne(userId);
+				team.addUser(user);
+				teamRepository.save(team);
+			} else {
+				throw new ServiceException("No space in team for user. userId = " + userId + "teamId = " + teamId);
+			}
+		} catch (Exception e) {
+			throw new ServiceException(
+					"Could not add User with id: " + userId + " " + "to Team with id: " + teamId , e);
+		}
+	}
+//
+//	// WORKITEM
+//
+//	public void saveWorkItem(WorkItem workItem) {
+//		try {
+//			workItemRepository.saveWorkItem(workItem);
+//		} catch (RepositoryException e) {
+//			throw new ServiceException("Could not save workItem: " + workItem.toString(), e);
+//		}
+//	}
+//
+//	public void updateStatusById(int workItemId, WorkItem.Status workItemStatus) {
+//		try {
+//			workItemRepository.updateStatusById(workItemId, workItemStatus);
+//		} catch (RepositoryException e) {
+//			throw new ServiceException("Could not update status to: \"" + workItemStatus.toString()
+//					+ "\" on WorkItem with id: " + workItemId, e);
+//		}
+//	}
+//
+//	public void deleteWorkItem(int workItemId) {
+//
+//		try {
+//			workItemRepository.deleteWorkItemById(workItemId);
+//
+//			cleanRelatedDataOnWorkItemDelete(workItemId);
+//		} catch (RepositoryException e) {
+//			throw new ServiceException("Could not delete WorkItem with id: " + workItemId, e);
+//		}
+//	}
+//
+//	public void addWorkItemToUser(int workItemId, int userId) {
+//
+//		try {
+//			if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId, userId)) {
+//				workItemRepository.addWorkItemToUser(workItemId, userId);
+//			} else {
+//				throw new ServiceException("Could not add work item to user, "
+//						+ "either user is inactive or there is no space for additional work items");
+//			}
+//		} catch (RepositoryException e) {
+//			throw new ServiceException("Could not add WorkItem " + workItemId + " to User " + userId, e);
+//		}
+//
+//	}
+//
+//	public List<WorkItem> getWorkItemsByStatus(WorkItem.Status workItemStatus) {
+//		try {
+//			return workItemRepository.getWorkItemsByStatus(workItemStatus);
+//		} catch (RepositoryException e) {
+//			throw new ServiceException("Could not WorkItems with status " + workItemStatus, e);
+//		}
+//	}
+//
+//	public List<WorkItem> getWorkItemsByTeamId(int teamId) {
+//		try {
+//			return workItemRepository.getWorkItemsByTeamId(teamId);
+//		} catch (RepositoryException e) {
+//			throw new ServiceException("Could not get WorkItem connected to Team id " + teamId, e);
+//		}
+//	}
+//
+//	public List<WorkItem> getWorkItemsByUserId(int userId) {
+//		try {
+//			return workItemRepository.getWorkItemsByUserId(userId);
+//		} catch (RepositoryException e) {
+//			throw new ServiceException("Could not WorkItem connected to User id " + userId, e);
+//		}
+//	}
+//
+//	public List<WorkItem> getWorkItemsWithIssue() {
+//		try {
+//			return workItemRepository.getWorkItemsWithIssue();
+//		} catch (RepositoryException e) {
+//			throw new ServiceException("Could not WorkItems with Issues", e);
+//		}
+//	}
+
+	// ISSUE
+
+	@Transactional
+	public Issue saveIssue(Issue issue) {
+		if (workItemIsDone(issue.getWorkitem().getId())) {
+			issueRepository.save(issue);
+			WorkItem workItem = workItemRepository.findOne(issue.getWorkitem().getId());
+			workItem.setIssue(issue).setStatus(Status.UNSTARTED);
+			workItemRepository.save(workItem);
+			return issue;
+		} else {
+			throw new ServiceException("WorkItem does not have status done");
+		}
+	}
+
+	@Transactional
+	public Issue updateIssueDescription(Long issueId, String description) {
 		try {
 			Issue issue = issueRepository.findById(issueId);
 			issue.setDescription(description);
-			issueRepository.save(issue);
+			return issueRepository.save(issue);
 		} catch (Exception e) {
 			throw new ServiceException("Could not change description of issue with id: " + issueId, e);
 		}
 	}
+	
+	@Transactional
+	public Issue getIssue(Long id){
+		try{
+		return issueRepository.findOne(id);
+		}catch(Exception e){
+			throw new ServiceException("Could not find issue with id: " + id, e);
+		}
+	}
 
-	public Page<Issue> getAllIssues(int start, int end) {
-		Page<Issue> issues = (Page<Issue>) issueRepository.findAll(new PageRequest(start, end));
+	@Transactional
+	public Page<Issue> getAllIssues(int page, int size) {
+		try{
+		Page<Issue> issues = (Page<Issue>) issueRepository.findAll(new PageRequest(page, size));
 		return issues;
+		}catch(Exception e){
+			throw new ServiceException("Could not retrive issues", e);
+		}
 	}
 
-	private boolean userFillsRequirements(User user) {
-		if (!usernameLongEnough(user.getUsername())) {
-			return false;
-		}
-		if (!teamHasSpaceForUser(user.getTeamId(), user.getId())) {
-			return false;
-		}
-		return true;
-	}
+//	private boolean userFillsRequirements(User user) {
+//		if (!usernameLongEnough(user.getUsername())) {
+//			return false;
+//		}
+//		if (!teamHasSpaceForUser(user.getTeamId(), user.getId())) {
+//			return false;
+//		}
+//		return true;
+//	}
 
 	private boolean usernameLongEnough(String username) {
 
 		return username.length() >= 10;
 	}
 
-	private boolean teamHasSpaceForUser(Long teamId, Long userId) throws RepositoryException {
+//	private boolean teamHasSpaceForUser(Long teamId, Long userId){
+//
+//		if (teamId == 0) {
+//			return true;
+//		}
+//		return numberOfUsersInTeamLessThanTen(teamId);
+//	}
+//
+//	private boolean numberOfUsersInTeamLessThanTen(Long teamId){
+//		List<User> users = userRepository.getUsersByTeamId(teamId);
+//		return users.size() < 10;
+//	}
+//
+//	private void setStatusOfAllWorkItemsOfUserToUnstarted(Long userId) throws RepositoryException {
+//
+//		List<WorkItem> workItems = workItemRepository.getWorkItemsByUserId(userId);
+//		for (WorkItem workItem : workItems) {
+//			workItemRepository.updateStatusById(workItem.getId(), WorkItem.Status.UNSTARTED);
+//		}
+//	}
+//
+//	private boolean userIsActive(Long userId) throws RepositoryException {
+//
+//		User user = userRepository.getUserById(userId);
+//		return user.isActive();
+//	}
+//
+//	private boolean userHasSpaceForAdditionalWorkItem(Long workItemId, Long userId) throws RepositoryException {
+//
+//		List<WorkItem> workItems = workItemRepository.getWorkItemsByUserId(userId);
+//
+//		if (workItems == null) {
+//			return true;
+//		}
+//		for (WorkItem workItem : workItems) {
+//			if (workItem.getId() == workItemId) {
+//				return true;
+//			}
+//		}
+//		return workItems.size() < 5;
+//	}
 
-		if (teamId == 0) {
-			return true;
-		}
-		return numberOfUsersInTeamLessThanTen(teamId);
-	}
-
-	private boolean numberOfUsersInTeamLessThanTen(Long teamId) throws RepositoryException {
-		List<User> users = userRepository.getUsersByTeamId(teamId);
-		return users.size() < 10;
-	}
-
-	private void setStatusOfAllWorkItemsOfUserToUnstarted(Long userId) throws RepositoryException {
-
-		List<WorkItem> workItems = workItemRepository.getWorkItemsByUserId(userId);
-		for (WorkItem workItem : workItems) {
-			workItemRepository.updateStatusById(workItem.getId(), WorkItem.Status.UNSTARTED);
-		}
-	}
-
-	private boolean userIsActive(Long userId) throws RepositoryException {
-
-		User user = userRepository.getUserById(userId);
-		return user.isActive();
-	}
-
-	private boolean userHasSpaceForAdditionalWorkItem(Long workItemId, Long userId) throws RepositoryException {
-
-		List<WorkItem> workItems = workItemRepository.getWorkItemsByUserId(userId);
-
-		if (workItems == null) {
-			return true;
-		}
-		for (WorkItem workItem : workItems) {
-			if (workItem.getId() == workItemId) {
-				return true;
-			}
-		}
-		return workItems.size() < 5;
-	}
-
-	private boolean workItemIsDone(Long workItemId) throws RepositoryException {
+	private boolean workItemIsDone(Long workItemId) {
 		WorkItem workItem = workItemRepository.findOne(workItemId);
 		return WorkItem.Status.DONE.equals(workItem.getStatus());
 	}
 
-	private void cleanRelatedDataOnWorkItemDelete(Long workItemId) throws RepositoryException {
-		for (Issue issue : issueRepository.getIssuesByWorkItemId(workItemId))
-			issueRepository.removeById(issue.getId());
-	}
+//	private void cleanRelatedDataOnWorkItemDelete(Long workItemId) throws RepositoryException {
+//		for (Issue issue : issueRepository.getIssuesByWorkItemId(workItemId))
+//			issueRepository.removeById(issue.getId());
+//	}
 
 	private boolean isPersistedObject(AbstractEntity entity) {
 		return entity.getId() != null;

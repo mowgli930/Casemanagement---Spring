@@ -99,6 +99,10 @@ public final class Team extends AbstractEntity {
 		return users;
 	}
 	
+	public void addUser(User user){
+		users.add(user);
+	}
+	
 	public String getCreatedBy() {
 		return createdBy;
 	}
