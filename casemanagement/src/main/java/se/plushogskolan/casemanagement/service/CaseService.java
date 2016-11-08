@@ -95,47 +95,53 @@ public class CaseService {
 	}
 
 	public void inactivateUser(Long userId) {
-		
-		if(userRepository.exists(userId)){
+
+		if (userRepository.exists(userId)) {
 			User user = userRepository.findOne(userId);
 			user.setActive(false);
 			userRepository.save(user);
-		}else{
+		} else {
 			throw new ServiceException("User doesnt exists :" + userId);
 		}
 	}
-//
-//	public void activateUserById(int userId) {
-//		try {
-//			userRepository.activateUserById(userId);
-//		} catch (RepositoryException e) {
-//			throw new ServiceException("Could not activate User with id " + userId, e);
-//		}
-//	}
-//
-//	public User getUserById(int userId) {
-//		try {
-//			return userRepository.getUserById(userId);
-//		} catch (RepositoryException e) {
-//			throw new ServiceException("Could not get User by id " + userId, e);
-//		}
-//	}
-//
-//	public List<User> searchUsersBy(String firstName, String lastName, String username) {
-//		try {
-//			return userRepository.searchUsersBy(firstName, lastName, username);
-//		} catch (RepositoryException e) {
-//			throw new ServiceException("Could not get User by first name, last name, username.", e);
-//		}
-//	}
-//
-//	public List<User> getUsersByTeamId(int teamId) {
-//		try {
-//			return userRepository.getUsersByTeamId(teamId);
-//		} catch (RepositoryException e) {
-//			throw new ServiceException("Could not get User by TeamId, teamId=" + teamId, e);
-//		}
-//	}
+
+	public void activateUser(Long userId) {
+
+		if (userRepository.exists(userId)) {
+			User user = userRepository.findOne(userId);
+			user.setActive(true);
+			userRepository.save(user);
+		} else {
+			throw new ServiceException("User doesnt exists :" + userId);
+		}
+	}
+	//
+	// public User getUserById(int userId) {
+	// try {
+	// return userRepository.getUserById(userId);
+	// } catch (RepositoryException e) {
+	// throw new ServiceException("Could not get User by id " + userId, e);
+	// }
+	// }
+	//
+	// public List<User> searchUsersBy(String firstName, String lastName, String
+	// username) {
+	// try {
+	// return userRepository.searchUsersBy(firstName, lastName, username);
+	// } catch (RepositoryException e) {
+	// throw new ServiceException("Could not get User by first name, last name,
+	// username.", e);
+	// }
+	// }
+	//
+	// public List<User> getUsersByTeamId(int teamId) {
+	// try {
+	// return userRepository.getUsersByTeamId(teamId);
+	// } catch (RepositoryException e) {
+	// throw new ServiceException("Could not get User by TeamId, teamId=" +
+	// teamId, e);
+	// }
+	// }
 
 	// // TEAM
 
@@ -208,80 +214,91 @@ public class CaseService {
 
 	// WORKITEM
 
-//	public void save(WorkItem workItem) {
-//		try {
-//			workItemRepository.saveWorkItem(workItem);
-//		} catch (RepositoryException e) {
-//			throw new ServiceException("Could not save workItem: " + workItem.toString(), e);
-//		}
-//	}
-//
-//	public void updateStatusById(int workItemId, WorkItem.Status workItemStatus) {
-//		try {
-//			workItemRepository.updateStatusById(workItemId, workItemStatus);
-//		} catch (RepositoryException e) {
-//			throw new ServiceException("Could not update status to: \"" + workItemStatus.toString()
-//					+ "\" on WorkItem with id: " + workItemId, e);
-//		}
-//	}
-//
-//	public void deleteWorkItem(int workItemId) {
-//
-//		try {
-//			workItemRepository.deleteWorkItemById(workItemId);
-//
-//			cleanRelatedDataOnWorkItemDelete(workItemId);
-//		} catch (RepositoryException e) {
-//			throw new ServiceException("Could not delete WorkItem with id: " + workItemId, e);
-//		}
-//	}
-//
-//	public void addWorkItemToUser(int workItemId, int userId) {
-//
-//		try {
-//			if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId, userId)) {
-//				workItemRepository.addWorkItemToUser(workItemId, userId);
-//			} else {
-//				throw new ServiceException("Could not add work item to user, "
-//						+ "either user is inactive or there is no space for additional work items");
-//			}
-//		} catch (RepositoryException e) {
-//			throw new ServiceException("Could not add WorkItem " + workItemId + " to User " + userId, e);
-//		}
-//
-//	}
-//
-//	public List<WorkItem> getWorkItemsByStatus(WorkItem.Status workItemStatus) {
-//		try {
-//			return workItemRepository.getWorkItemsByStatus(workItemStatus);
-//		} catch (RepositoryException e) {
-//			throw new ServiceException("Could not WorkItems with status " + workItemStatus, e);
-//		}
-//	}
-//
-//	public List<WorkItem> getWorkItemsByTeamId(int teamId) {
-//		try {
-//			return workItemRepository.getWorkItemsByTeamId(teamId);
-//		} catch (RepositoryException e) {
-//			throw new ServiceException("Could not get WorkItem connected to Team id " + teamId, e);
-//		}
-//	}
-//
-//	public List<WorkItem> getWorkItemsByUserId(int userId) {
-//		try {
-//			return workItemRepository.getWorkItemsByUserId(userId);
-//		} catch (RepositoryException e) {
-//			throw new ServiceException("Could not WorkItem connected to User id " + userId, e);
-//		}
-//	}
-//
-//	public List<WorkItem> getWorkItemsWithIssue() {
-//		try {
-//			return workItemRepository.getWorkItemsWithIssue();
-//		} catch (RepositoryException e) {
-//			throw new ServiceException("Could not WorkItems with Issues", e);
-//		}
-//	}
+	// public void save(WorkItem workItem) {
+	// try {
+	// workItemRepository.saveWorkItem(workItem);
+	// } catch (RepositoryException e) {
+	// throw new ServiceException("Could not save workItem: " +
+	// workItem.toString(), e);
+	// }
+	// }
+	//
+	// public void updateStatusById(int workItemId, WorkItem.Status
+	// workItemStatus) {
+	// try {
+	// workItemRepository.updateStatusById(workItemId, workItemStatus);
+	// } catch (RepositoryException e) {
+	// throw new ServiceException("Could not update status to: \"" +
+	// workItemStatus.toString()
+	// + "\" on WorkItem with id: " + workItemId, e);
+	// }
+	// }
+	//
+	// public void deleteWorkItem(int workItemId) {
+	//
+	// try {
+	// workItemRepository.deleteWorkItemById(workItemId);
+	//
+	// cleanRelatedDataOnWorkItemDelete(workItemId);
+	// } catch (RepositoryException e) {
+	// throw new ServiceException("Could not delete WorkItem with id: " +
+	// workItemId, e);
+	// }
+	// }
+	//
+	// public void addWorkItemToUser(int workItemId, int userId) {
+	//
+	// try {
+	// if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId,
+	// userId)) {
+	// workItemRepository.addWorkItemToUser(workItemId, userId);
+	// } else {
+	// throw new ServiceException("Could not add work item to user, "
+	// + "either user is inactive or there is no space for additional work
+	// items");
+	// }
+	// } catch (RepositoryException e) {
+	// throw new ServiceException("Could not add WorkItem " + workItemId + " to
+	// User " + userId, e);
+	// }
+	//
+	// }
+	//
+	// public List<WorkItem> getWorkItemsByStatus(WorkItem.Status
+	// workItemStatus) {
+	// try {
+	// return workItemRepository.getWorkItemsByStatus(workItemStatus);
+	// } catch (RepositoryException e) {
+	// throw new ServiceException("Could not WorkItems with status " +
+	// workItemStatus, e);
+	// }
+	// }
+	//
+	// public List<WorkItem> getWorkItemsByTeamId(int teamId) {
+	// try {
+	// return workItemRepository.getWorkItemsByTeamId(teamId);
+	// } catch (RepositoryException e) {
+	// throw new ServiceException("Could not get WorkItem connected to Team id "
+	// + teamId, e);
+	// }
+	// }
+	//
+	// public List<WorkItem> getWorkItemsByUserId(int userId) {
+	// try {
+	// return workItemRepository.getWorkItemsByUserId(userId);
+	// } catch (RepositoryException e) {
+	// throw new ServiceException("Could not WorkItem connected to User id " +
+	// userId, e);
+	// }
+	// }
+	//
+	// public List<WorkItem> getWorkItemsWithIssue() {
+	// try {
+	// return workItemRepository.getWorkItemsWithIssue();
+	// } catch (RepositoryException e) {
+	// throw new ServiceException("Could not WorkItems with Issues", e);
+	// }
+	// }
 
 	// ISSUE
 
@@ -356,44 +373,50 @@ public class CaseService {
 		return users.size() < 10;
 	}
 
-//	private void setStatusOfAllWorkItemsOfUserToUnstarted(Long userId) throws RepositoryException {
-//
-//		List<WorkItem> workItems = workItemRepository.getWorkItemsByUserId(userId);
-//		for (WorkItem workItem : workItems) {
-//			workItemRepository.updateStatusById(workItem.getId(), WorkItem.Status.UNSTARTED);
-//		}
-//	}
-//
-//	private boolean userIsActive(Long userId) throws RepositoryException {
-//
-//		User user = userRepository.getUserById(userId);
-//		return user.isActive();
-//	}
-//
-//	private boolean userHasSpaceForAdditionalWorkItem(Long workItemId, Long userId) throws RepositoryException {
-//
-//		List<WorkItem> workItems = workItemRepository.getWorkItemsByUserId(userId);
-//
-//		if (workItems == null) {
-//			return true;
-//		}
-//		for (WorkItem workItem : workItems) {
-//			if (workItem.getId() == workItemId) {
-//				return true;
-//			}
-//		}
-//		return workItems.size() < 5;
-//	}
+	// private void setStatusOfAllWorkItemsOfUserToUnstarted(Long userId) throws
+	// RepositoryException {
+	//
+	// List<WorkItem> workItems =
+	// workItemRepository.getWorkItemsByUserId(userId);
+	// for (WorkItem workItem : workItems) {
+	// workItemRepository.updateStatusById(workItem.getId(),
+	// WorkItem.Status.UNSTARTED);
+	// }
+	// }
+	//
+	// private boolean userIsActive(Long userId) throws RepositoryException {
+	//
+	// User user = userRepository.getUserById(userId);
+	// return user.isActive();
+	// }
+	//
+	// private boolean userHasSpaceForAdditionalWorkItem(Long workItemId, Long
+	// userId) throws RepositoryException {
+	//
+	// List<WorkItem> workItems =
+	// workItemRepository.getWorkItemsByUserId(userId);
+	//
+	// if (workItems == null) {
+	// return true;
+	// }
+	// for (WorkItem workItem : workItems) {
+	// if (workItem.getId() == workItemId) {
+	// return true;
+	// }
+	// }
+	// return workItems.size() < 5;
+	// }
 
 	private boolean workItemIsDone(Long workItemId) {
 		WorkItem workItem = workItemRepository.findOne(workItemId);
 		return WorkItem.Status.DONE.equals(workItem.getStatus());
 	}
 
-//	private void cleanRelatedDataOnWorkItemDelete(Long workItemId) throws RepositoryException {
-//		for (Issue issue : issueRepository.getIssuesByWorkItemId(workItemId))
-//			issueRepository.removeById(issue.getId());
-//	}
+	// private void cleanRelatedDataOnWorkItemDelete(Long workItemId) throws
+	// RepositoryException {
+	// for (Issue issue : issueRepository.getIssuesByWorkItemId(workItemId))
+	// issueRepository.removeById(issue.getId());
+	// }
 
 	private boolean isPersistedObject(AbstractEntity entity) {
 		return entity.getId() != null;
