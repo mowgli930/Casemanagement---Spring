@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import se.plushogskolan.casemanagement.exception.ServiceException;
@@ -139,24 +140,23 @@ public class CaseService {
 	}
 
 	public List<User> searchUsersByFirstName(String firstName) {
-		
+
 		return userRepository.findByFirstNameContaining(firstName);
 	}
-	
-	public List<User> searchUsersByLastName(String lastName){
-		
+
+	public List<User> searchUsersByLastName(String lastName) {
+
 		return userRepository.findByLastNameContaining(lastName);
 	}
-	
-	public List<User> searchUsersByUsername(String username){
-		
+
+	public List<User> searchUsersByUsername(String username) {
+
 		return userRepository.findByUsernameContaining(username);
 	}
-	
-	
+
 	public List<User> getUsersByTeam(Long teamId) {
-		
-			return userRepository.findByTeamId(teamId);	
+
+		return userRepository.findByTeamId(teamId);
 	}
 
 	// // TEAM
@@ -230,91 +230,84 @@ public class CaseService {
 
 	// WORKITEM
 
-	// public void save(WorkItem workItem) {
-	// try {
-	// workItemRepository.saveWorkItem(workItem);
-	// } catch (RepositoryException e) {
-	// throw new ServiceException("Could not save workItem: " +
-	// workItem.toString(), e);
-	// }
-	// }
-	//
-	// public void updateStatusById(int workItemId, WorkItem.Status
-	// workItemStatus) {
-	// try {
-	// workItemRepository.updateStatusById(workItemId, workItemStatus);
-	// } catch (RepositoryException e) {
-	// throw new ServiceException("Could not update status to: \"" +
-	// workItemStatus.toString()
-	// + "\" on WorkItem with id: " + workItemId, e);
-	// }
-	// }
-	//
-	// public void deleteWorkItem(int workItemId) {
-	//
-	// try {
-	// workItemRepository.deleteWorkItemById(workItemId);
-	//
-	// cleanRelatedDataOnWorkItemDelete(workItemId);
-	// } catch (RepositoryException e) {
-	// throw new ServiceException("Could not delete WorkItem with id: " +
-	// workItemId, e);
-	// }
-	// }
-	//
-	// public void addWorkItemToUser(int workItemId, int userId) {
-	//
-	// try {
-	// if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId,
-	// userId)) {
-	// workItemRepository.addWorkItemToUser(workItemId, userId);
-	// } else {
-	// throw new ServiceException("Could not add work item to user, "
-	// + "either user is inactive or there is no space for additional work
-	// items");
-	// }
-	// } catch (RepositoryException e) {
-	// throw new ServiceException("Could not add WorkItem " + workItemId + " to
-	// User " + userId, e);
-	// }
-	//
-	// }
-	//
-	// public List<WorkItem> getWorkItemsByStatus(WorkItem.Status
-	// workItemStatus) {
-	// try {
-	// return workItemRepository.getWorkItemsByStatus(workItemStatus);
-	// } catch (RepositoryException e) {
-	// throw new ServiceException("Could not WorkItems with status " +
-	// workItemStatus, e);
-	// }
-	// }
-	//
-	// public List<WorkItem> getWorkItemsByTeamId(int teamId) {
-	// try {
-	// return workItemRepository.getWorkItemsByTeamId(teamId);
-	// } catch (RepositoryException e) {
-	// throw new ServiceException("Could not get WorkItem connected to Team id "
-	// + teamId, e);
-	// }
-	// }
-	//
-	// public List<WorkItem> getWorkItemsByUserId(int userId) {
-	// try {
-	// return workItemRepository.getWorkItemsByUserId(userId);
-	// } catch (RepositoryException e) {
-	// throw new ServiceException("Could not WorkItem connected to User id " +
-	// userId, e);
-	// }
-	// }
-	//
-	// public List<WorkItem> getWorkItemsWithIssue() {
-	// try {
-	// return workItemRepository.getWorkItemsWithIssue();
-	// } catch (RepositoryException e) {
-	// throw new ServiceException("Could not WorkItems with Issues", e);
-	// }
-	// }
+	public WorkItem save(WorkItem workItem) {
+		try {
+			return workItemRepository.save(workItem);
+		} catch (Exception e) {
+			throw new ServiceException("Could not save workItem: " + workItem.toString(), e);
+		}
+	}
+
+	public void updateStatusById(Long workItemId, WorkItem.Status workItemStatus) {
+		try {
+			workItemRepository.updateStatusById(workItemId, workItemStatus);
+		} catch (Exception e) {
+			throw new ServiceException("Could not update status to: \"" + workItemStatus.toString()
+					+ "\" on WorkItem with id: " + workItemId, e);
+		}
+	}
+	
+	public void deleteWorkItem(Long workItemId) {
+
+		try {
+			workItemRepository.delete(workItemId);
+
+			cleanRelatedDataOnWorkItemDelete(workItemId);
+		} catch (Exception e) {
+			throw new ServiceException("Could not delete WorkItem with id: " + workItemId, e);
+		}
+	 }
+
+	public void addWorkItemToUser(Long workItemId, Long userId) {
+	
+		 try {
+			 if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId,
+					 userId)) {
+				 workItemRepository.addWorkItemToUser(workItemId, userId);
+			 } else {
+				 throw new ServiceException("Could not add work item to user, either user is inactive or there is no space for additional work items");
+			 }
+		 } catch (Exception e) {
+			 throw new ServiceException("Could not add WorkItem " + workItemId + " to User " + userId, e);
+		 }
+	
+	 }
+	
+	public Slice<WorkItem> getWorkItemsByStatus(WorkItem.Status workItemStatus) {
+		try {
+			//TODO How should the PageRequest look?
+			return workItemRepository.getWorkItemsByStatus(workItemStatus, new PageRequest(10, 10));
+		} catch (Exception e) {
+			throw new ServiceException("Could not WorkItems with status " + workItemStatus, e);
+		}
+	}
+
+	public Slice<WorkItem> getWorkItemsByTeamId(Long teamId) {
+		try {
+			//TODO How should the PageRequest look?
+			return workItemRepository.getWorkItemsByTeamId(teamId, new PageRequest(10, 10));
+		} catch (Exception e) {
+			throw new ServiceException("Could not get WorkItem connected to Team id " + teamId, e);
+		}
+	}
+
+	public Slice<WorkItem> getWorkItemsByUserId(Long userId) {
+		try {
+			//TODO How should the PageRequest look?
+			return workItemRepository.findByUserId(userId, new PageRequest(10, 10));
+		} catch (Exception e) {
+			throw new ServiceException("Could not WorkItem connected to User id " + userId, e);
+		}
+	}
+
+	public Slice<WorkItem> getWorkItemsWithIssue() {
+		try {
+			//TODO How should the PageRequest look?
+			return workItemRepository.getWorkItemsWithIssue(new PageRequest(10, 10));
+		} catch (Exception e) {
+			throw new ServiceException("Could not WorkItems with Issues", e);
+		}
+	}
 
 	// ISSUE
 
@@ -385,54 +378,50 @@ public class CaseService {
 	}
 
 	private boolean numberOfUsersInTeamLessThanTen(Long teamId) {
-		List<User> users = userRepository.getUsersByTeamId(teamId);
+		List<User> users = userRepository.findByTeamId(teamId);
 		return users.size() < 10;
 	}
 
-	// private void setStatusOfAllWorkItemsOfUserToUnstarted(Long userId) throws
-	// RepositoryException {
-	//
-	// List<WorkItem> workItems =
-	// workItemRepository.getWorkItemsByUserId(userId);
-	// for (WorkItem workItem : workItems) {
-	// workItemRepository.updateStatusById(workItem.getId(),
-	// WorkItem.Status.UNSTARTED);
-	// }
-	// }
-	//
-	// private boolean userIsActive(Long userId) throws RepositoryException {
-	//
-	// User user = userRepository.getUserById(userId);
-	// return user.isActive();
-	// }
-	//
-	// private boolean userHasSpaceForAdditionalWorkItem(Long workItemId, Long
-	// userId) throws RepositoryException {
-	//
-	// List<WorkItem> workItems =
-	// workItemRepository.getWorkItemsByUserId(userId);
-	//
-	// if (workItems == null) {
-	// return true;
-	// }
-	// for (WorkItem workItem : workItems) {
-	// if (workItem.getId() == workItemId) {
-	// return true;
-	// }
-	// }
-	// return workItems.size() < 5;
-	// }
+	//TODO Unused method, should be removed?
+	private void setStatusOfAllWorkItemsOfUserToUnstarted(Long userId) throws Exception {
+		
+		//TODO How should the PageRequest look?
+		Slice<WorkItem> workItems = workItemRepository.findByUserId(userId, new PageRequest(10, 10));
+		for (WorkItem workItem : workItems) {
+			workItemRepository.updateStatusById(workItem.getId(), WorkItem.Status.UNSTARTED);
+		}
+	}
+
+	private boolean userIsActive(Long userId) throws Exception {
+
+		User user = userRepository.findOne(userId);
+		return user.isActive();
+	}
+
+	private boolean userHasSpaceForAdditionalWorkItem(Long workItemId, Long userId) throws Exception {
+		//TODO How should the PageRequest look?
+		Slice<WorkItem> workItems = workItemRepository.findByUserId(userId, new PageRequest(10, 10));
+
+		if (workItems == null) {
+			return true;
+		}
+		for (WorkItem workItem : workItems) {
+			if (workItem.getId() == workItemId) {
+				return true;
+			}
+		}
+		return workItems.getSize() < 5;
+	}
 
 	private boolean workItemIsDone(Long workItemId) {
 		WorkItem workItem = workItemRepository.findOne(workItemId);
 		return WorkItem.Status.DONE.equals(workItem.getStatus());
 	}
 
-	// private void cleanRelatedDataOnWorkItemDelete(Long workItemId) throws
-	// RepositoryException {
-	// for (Issue issue : issueRepository.getIssuesByWorkItemId(workItemId))
-	// issueRepository.removeById(issue.getId());
-	// }
+	private void cleanRelatedDataOnWorkItemDelete(Long workItemId) throws Exception {
+		for (Issue issue : issueRepository.getIssuesByWorkItemId(workItemId))
+			issueRepository.removeById(issue.getId());
+	}
 
 	private boolean isPersistedObject(AbstractEntity entity) {
 		return entity.getId() != null;

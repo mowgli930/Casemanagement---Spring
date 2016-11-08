@@ -11,15 +11,18 @@ import se.plushogskolan.casemanagement.model.WorkItem;
 
 public interface WorkItemRepository extends PagingAndSortingRepository<WorkItem, Long>{
 	
-//	WorkItem updateStatusById(Long workItemId, WorkItem.Status workItemStatus);
+	@Query("UPDATE #{#entityName} wi SET wi.status = :status WHERE wi.id = :workItemId")
+	WorkItem updateStatusById(@Param("workItemId") Long workItemId, @Param("status") WorkItem.Status workItemStatus);
 	
 	@Modifying
 	@Query("UPDATE #{#entityName} wi SET wi.user.id = :userId WHERE wi.id = :workItemId")
 	void addWorkItemToUser(@Param("workItemId") Long workItemId, @Param("userId") Long userId);
-//	
-//	Slice<WorkItem> getWorkItemByStatus(WorkItem.Status workItemStatus, Pageable pageable);
-//   
-//	Slice<WorkItem> getWorkItemsByTeamId(Long teamId, Pageable pageable);
+	
+	@Query("SELECT wi FROM #{#entityName} WHERE wi.status = :status")
+	Slice<WorkItem> getWorkItemsByStatus(@Param("status") WorkItem.Status workItemStatus, Pageable pageable);
+
+	@Query("SELECT wi FROM #{#entityName} wi WHERE wi.team.id = :teamId")
+	Slice<WorkItem> getWorkItemsByTeamId(@Param("teamId") Long teamId, Pageable pageable);
 	
 	Slice<WorkItem> findByUserId(Long userId, Pageable pageable);
 	
