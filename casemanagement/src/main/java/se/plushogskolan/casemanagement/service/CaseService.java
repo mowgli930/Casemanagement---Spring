@@ -50,7 +50,7 @@ public class CaseService {
 	}
 
 	@Transactional
-	public void updateUserFirstName(Long userId, String firstName) {
+	public User updateUserFirstName(Long userId, String firstName) {
 
 		if (userRepository.exists(userId)) {
 
@@ -58,7 +58,7 @@ public class CaseService {
 
 			user.setFirstName(firstName);
 
-			userRepository.save(user);
+			return userRepository.save(user);
 
 		} else {
 			throw new ServiceException("User doesnt exist :" + userId);
@@ -66,21 +66,21 @@ public class CaseService {
 	}
 
 	@Transactional
-	public void updateUserLastName(Long userId, String lastName) {
+	public User updateUserLastName(Long userId, String lastName) {
 
 		if (userRepository.exists(userId)) {
 			User user = userRepository.findOne(userId);
 
 			user.setLastName(lastName);
 
-			userRepository.save(user);
+			return userRepository.save(user);
 
 		} else {
 			throw new ServiceException("User doesnt exist :" + userId);
 		}
 	}
 
-	public void updateUserUsername(Long userId, String username) {
+	public User updateUserUsername(Long userId, String username) {
 
 		if (usernameLongEnough(username) && userRepository.exists(userId)) {
 
@@ -88,42 +88,53 @@ public class CaseService {
 
 			user.setUsername(username);
 
-			userRepository.save(user);
+			return userRepository.save(user);
+
 		} else {
 			throw new ServiceException("User doesnt exist or username to long :" + userId);
 		}
 	}
 
-	public void inactivateUser(Long userId) {
+	public User inactivateUser(Long userId) {
 
 		if (userRepository.exists(userId)) {
+
 			User user = userRepository.findOne(userId);
+
 			user.setActive(false);
-			userRepository.save(user);
+
+			return userRepository.save(user);
+
 		} else {
 			throw new ServiceException("User doesnt exists :" + userId);
 		}
 	}
 
-	public void activateUser(Long userId) {
+	public User activateUser(Long userId) {
 
 		if (userRepository.exists(userId)) {
+
 			User user = userRepository.findOne(userId);
+
 			user.setActive(true);
-			userRepository.save(user);
+
+			return userRepository.save(user);
+
 		} else {
 			throw new ServiceException("User doesnt exists :" + userId);
 		}
 	}
-	//
-	// public User getUserById(int userId) {
-	// try {
-	// return userRepository.getUserById(userId);
-	// } catch (RepositoryException e) {
-	// throw new ServiceException("Could not get User by id " + userId, e);
-	// }
-	// }
-	//
+
+	public User getUser(Long userId) {
+
+		if (userRepository.exists(userId)) {
+			return userRepository.findOne(userId);
+		} else {
+			throw new ServiceException("User doesnt exists :" + userId);
+		}
+
+	}
+
 	// public List<User> searchUsersBy(String firstName, String lastName, String
 	// username) {
 	// try {
