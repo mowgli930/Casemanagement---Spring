@@ -154,12 +154,9 @@ public class CaseService {
 	}
 	
 	
-	public List<User> getUsersByTeamId(int teamId) {
-		try {
-			return userRepository.getUsersByTeamId(teamId);
-		} catch (RepositoryException e) {
-			throw new ServiceException("Could not get User by TeamId, teamId=" + teamId, e);
-		}
+	public List<User> getUsersByTeam(Long teamId) {
+		
+			return userRepository.findByTeamId(teamId);	
 	}
 
 	// // TEAM

@@ -13,6 +13,8 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 	List<User> findByLastNameContaining(String lastName);
 	
 	List<User> findByUsernameContaining(String username);
+	
+	List<User> findByTeamId(Long id);
 
 	// void saveUser(User user) throws RepositoryException;
 	//
