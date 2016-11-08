@@ -61,7 +61,7 @@ public class CaseService {
 			userRepository.save(user);
 
 		} else {
-			throw new ServiceException("Object doesnt exist :" + userId);
+			throw new ServiceException("User doesnt exist :" + userId);
 		}
 	}
 
@@ -76,7 +76,7 @@ public class CaseService {
 			userRepository.save(user);
 
 		} else {
-			throw new ServiceException("Could not update user with id: " + userId + ", new last name: " + lastName);
+			throw new ServiceException("User doesnt exist :" + userId);
 		}
 	}
 
@@ -90,19 +90,20 @@ public class CaseService {
 
 			userRepository.save(user);
 		} else {
-			throw new ServiceException("Username not long enough. Username was " + username);
+			throw new ServiceException("User doesnt exist or username to long :" + userId);
 		}
 	}
 
-//	public void inactivateUserById(int userId) {
-//
-//		try {
-//			userRepository.inactivateUserById(userId);
-//			setStatusOfAllWorkItemsOfUserToUnstarted(userId);
-//		} catch (RepositoryException e) {
-//			throw new ServiceException("Could not inactivate User with id " + userId, e);
-//		}
-//	}
+	public void inactivateUser(Long userId) {
+		
+		if(userRepository.exists(userId)){
+			User user = userRepository.findOne(userId);
+			user.setActive(false);
+			userRepository.save(user);
+		}else{
+			throw new ServiceException("User doesnt exists :" + userId);
+		}
+	}
 //
 //	public void activateUserById(int userId) {
 //		try {
