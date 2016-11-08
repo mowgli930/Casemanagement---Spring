@@ -139,7 +139,7 @@ public class CaseService {
 	// // TEAM
 
 	@Transactional
-	public Team saveTeam(Team team) {
+	public Team save(Team team) {
 		try {
 			return teamRepository.save(team);
 		} catch (Exception e) {
@@ -207,7 +207,7 @@ public class CaseService {
 
 	// WORKITEM
 
-	public void saveWorkItem(WorkItem workItem) {
+	public void save(WorkItem workItem) {
 		try {
 			workItemRepository.saveWorkItem(workItem);
 		} catch (RepositoryException e) {
@@ -285,7 +285,7 @@ public class CaseService {
 	// ISSUE
 
 	@Transactional
-	public Issue saveIssue(Issue issue) {
+	public Issue save(Issue issue) {
 		if (workItemIsDone(issue.getWorkitem().getId())) {
 			issueRepository.save(issue);
 			WorkItem workItem = workItemRepository.findOne(issue.getWorkitem().getId());
@@ -331,7 +331,7 @@ public class CaseService {
 		if (!usernameLongEnough(user.getUsername())) {
 			return false;
 		}
-		if (!teamHasSpaceForUser(user.getTeamId(), user.getId())) {
+		if (!teamHasSpaceForUser(user.getTeam().getId(), user.getId())) {
 			return false;
 		}
 		return true;
