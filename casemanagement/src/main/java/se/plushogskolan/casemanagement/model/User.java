@@ -23,7 +23,7 @@ public class User extends AbstractEntity {
 	private String username;
 
 	@ManyToOne
-	private Team team = null;
+	private Team team;
 
 	@OneToMany(mappedBy = "user")
 	private Collection<WorkItem> workItems = null;
