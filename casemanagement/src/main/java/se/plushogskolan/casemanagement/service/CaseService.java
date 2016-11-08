@@ -80,6 +80,7 @@ public class CaseService {
 		}
 	}
 
+	@Transactional
 	public User updateUserUsername(Long userId, String username) {
 
 		if (usernameLongEnough(username) && userRepository.exists(userId)) {
@@ -95,6 +96,7 @@ public class CaseService {
 		}
 	}
 
+	@Transactional
 	public User inactivateUser(Long userId) {
 
 		if (userRepository.exists(userId)) {
@@ -110,6 +112,7 @@ public class CaseService {
 		}
 	}
 
+	@Transactional
 	public User activateUser(Long userId) {
 
 		if (userRepository.exists(userId)) {
@@ -135,24 +138,29 @@ public class CaseService {
 
 	}
 
-	// public List<User> searchUsersBy(String firstName, String lastName, String
-	// username) {
-	// try {
-	// return userRepository.searchUsersBy(firstName, lastName, username);
-	// } catch (RepositoryException e) {
-	// throw new ServiceException("Could not get User by first name, last name,
-	// username.", e);
-	// }
-	// }
-	//
-	// public List<User> getUsersByTeamId(int teamId) {
-	// try {
-	// return userRepository.getUsersByTeamId(teamId);
-	// } catch (RepositoryException e) {
-	// throw new ServiceException("Could not get User by TeamId, teamId=" +
-	// teamId, e);
-	// }
-	// }
+	public List<User> searchUsersByFirstName(String firstName) {
+		
+		return userRepository.findByFirstNameContaining(firstName);
+	}
+	
+	public List<User> searchUsersByLastName(String lastName){
+		
+		return userRepository.findByLastNameContaining(lastName);
+	}
+	
+	public List<User> searchUsersByUsername(String username){
+		
+		return userRepository.findByUsernameContaining(username);
+	}
+	
+	
+	public List<User> getUsersByTeamId(int teamId) {
+		try {
+			return userRepository.getUsersByTeamId(teamId);
+		} catch (RepositoryException e) {
+			throw new ServiceException("Could not get User by TeamId, teamId=" + teamId, e);
+		}
+	}
 
 	// // TEAM
 
