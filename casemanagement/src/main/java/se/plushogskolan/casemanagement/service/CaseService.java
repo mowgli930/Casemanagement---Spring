@@ -329,7 +329,7 @@ public class CaseService {
 	@Transactional
 	public Issue updateIssueDescription(Long issueId, String description) {
 		try {
-			Issue issue = issueRepository.findById(issueId);
+			Issue issue = issueRepository.findOne(issueId);
 			issue.setDescription(description);
 			return issueRepository.save(issue);
 		} catch (Exception e) {
@@ -414,7 +414,7 @@ public class CaseService {
 
 	private void cleanRelatedDataOnWorkItemDelete(Long workItemId) {
 		for (Issue issue : issueRepository.getIssuesByWorkItemId(workItemId))
-			issueRepository.removeById(issue.getId());
+			issueRepository.delete(issue.getId());
 	}
 
 	private boolean isPersistedObject(AbstractEntity entity) {
