@@ -13,11 +13,5 @@ import se.plushogskolan.casemanagement.model.Issue;
 public interface IssueRepository extends PagingAndSortingRepository<Issue, Long>{
 
 	@Query("SELECT i FROM #{#entityName} i WHERE i.workItem.id = :workItemId")
-    List<Issue> getIssuesByWorkItemId(@Param("workItemId")Long workItemId);
-    
-    Issue findById(Long id);
-    
-    @Transactional
-	Issue removeById(Long id);
-    
+    List<Issue> getIssuesByWorkItemId(@Param("workItemId")Long workItemId);    
 }
