@@ -4,6 +4,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
@@ -251,42 +252,38 @@ public class CaseService {
 	}
 
 	public void addWorkItemToUser(Long workItemId, Long userId) {
-		if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId, userId)) {
+		if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId, userId, new PageRequest(5, 5))) {
 			workItemRepository.addWorkItemToUser(workItemId, userId);
 		}
 	}
 
-	public Slice<WorkItem> getWorkItemsByStatus(WorkItem.Status workItemStatus) {
+	public Slice<WorkItem> getWorkItemsByStatus(WorkItem.Status workItemStatus, Pageable pageable) {
 		try {
-			// TODO How should the PageRequest look?
-			return workItemRepository.getWorkItemsByStatus(workItemStatus, new PageRequest(10, 10));
+			return workItemRepository.getWorkItemsByStatus(workItemStatus, pageable);
 		} catch (Exception e) {
 			throw new ServiceException("Could not WorkItems with status " + workItemStatus, e);
 		}
 	}
 
-	public Slice<WorkItem> getWorkItemsByTeamId(Long teamId) {
+	public Slice<WorkItem> getWorkItemsByTeamId(Long teamId, Pageable pageable) {
 		try {
-			// TODO How should the PageRequest look?
-			return workItemRepository.getWorkItemsByTeamId(teamId, new PageRequest(10, 10));
+			return workItemRepository.getWorkItemsByTeamId(teamId, pageable);
 		} catch (Exception e) {
 			throw new ServiceException("Could not get WorkItem connected to Team id " + teamId, e);
 		}
 	}
 
-	public Slice<WorkItem> getWorkItemsByUserId(Long userId) {
+	public Slice<WorkItem> getWorkItemsByUserId(Long userId, Pageable pageable) {
 		try {
-			// TODO How should the PageRequest look?
-			return workItemRepository.findByUserId(userId, new PageRequest(10, 10));
+			return workItemRepository.findByUserId(userId, pageable);
 		} catch (Exception e) {
 			throw new ServiceException("Could not WorkItem connected to User id " + userId, e);
 		}
 	}
 
-	public Slice<WorkItem> getWorkItemsWithIssue() {
+	public Slice<WorkItem> getWorkItemsWithIssue(Pageable pageable) {
 		try {
-			// TODO How should the PageRequest look?
-			return workItemRepository.getWorkItemsWithIssue(new PageRequest(10, 10));
+			return workItemRepository.getWorkItemsWithIssue(pageable);
 		} catch (Exception e) {
 			throw new ServiceException("Could not WorkItems with Issues", e);
 		}
@@ -363,9 +360,9 @@ public class CaseService {
 			throw new ServiceException("User is not active");
 	}
 
-	private boolean userHasSpaceForAdditionalWorkItem(Long workItemId, Long userId) {
+	private boolean userHasSpaceForAdditionalWorkItem(Long workItemId, Long userId, Pageable pageable) {
 		// TODO How should the PageRequest look?
-		Slice<WorkItem> workItems = workItemRepository.findByUserId(userId, new PageRequest(10, 10));
+		Slice<WorkItem> workItems = workItemRepository.findByUserId(userId, pageable);
 
 		if (workItems == null) {
 			return true;
