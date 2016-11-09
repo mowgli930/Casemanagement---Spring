@@ -358,10 +358,10 @@ public class CaseService {
 
 	private boolean userFillsRequirements(User user) {
 		if (!usernameLongEnough(user.getUsername())) {
-			return false;
+			throw new ServiceException("Username is too short.");
 		}
 		if (user.getTeam() != null && !teamHasSpaceForUser(user.getTeam().getId())) {
-			return false;
+			throw new ServiceException("Team has no space for additional user");
 		}
 		return true;
 	}
