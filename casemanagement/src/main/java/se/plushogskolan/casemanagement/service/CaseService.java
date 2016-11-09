@@ -228,46 +228,32 @@ public class CaseService {
 	// WORKITEM
 
 	public WorkItem save(WorkItem workItem) {
-		try {
+		if(!isPersistedObject(workItem))
 			return workItemRepository.save(workItem);
-		} catch (Exception e) {
-			throw new ServiceException("Could not save workItem: " + workItem.toString(), e);
-		}
+		else
+			throw new ServiceException("Could not save WorkItem");
 	}
 
 	public void updateStatusById(Long workItemId, WorkItem.Status workItemStatus) {
-		try {
+		if(workItemRepository.exists(workItemId))
 			workItemRepository.updateStatusById(workItemId, workItemStatus);
-		} catch (Exception e) {
-			throw new ServiceException("Could not update status to: \"" + workItemStatus.toString()
-					+ "\" on WorkItem with id: " + workItemId, e);
-		}
+		else
+			throw new ServiceException("This WorkItem does not exist");
 	}
 
 	public void deleteWorkItem(Long workItemId) {
-
-		try {
+		if(workItemRepository.exists(workItemId)) {
 			workItemRepository.delete(workItemId);
-
-			cleanRelatedDataOnWorkItemDelete(workItemId);
-		} catch (Exception e) {
-			throw new ServiceException("Could not delete WorkItem with id: " + workItemId, e);
+			cleanRelatedDataOnWorkItemDelete(workItemId);			
 		}
+		else
+			throw new ServiceException("This WorkItem does not exist");
 	}
 
 	public void addWorkItemToUser(Long workItemId, Long userId) {
-
-		try {
-			if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId, userId)) {
-				workItemRepository.addWorkItemToUser(workItemId, userId);
-			} else {
-				throw new ServiceException(
-						"Could not add work item to user, either user is inactive or there is no space for additional work items");
-			}
-		} catch (Exception e) {
-			throw new ServiceException("Could not add WorkItem " + workItemId + " to User " + userId, e);
+		if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId, userId)) {
+			workItemRepository.addWorkItemToUser(workItemId, userId);
 		}
-
 	}
 
 	public Slice<WorkItem> getWorkItemsByStatus(WorkItem.Status workItemStatus) {
@@ -371,7 +357,10 @@ public class CaseService {
 	private boolean userIsActive(Long userId) {
 
 		User user = userRepository.findOne(userId);
-		return user.isActive();
+		if(user.isActive())
+			return true;
+		else
+			throw new ServiceException("User is not active");
 	}
 
 	private boolean userHasSpaceForAdditionalWorkItem(Long workItemId, Long userId) {
@@ -386,7 +375,10 @@ public class CaseService {
 				return true;
 			}
 		}
-		return workItems.getSize() < 5;
+		if(workItems.getSize() < 5)
+			return true;
+		else
+			throw new ServiceException("User does not have space for additional WorkItems");
 	}
 
 	private boolean workItemIsDone(Long workItemId) {
