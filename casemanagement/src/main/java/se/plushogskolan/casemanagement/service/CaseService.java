@@ -412,7 +412,7 @@ public class CaseService {
 		return WorkItem.Status.DONE.equals(workItem.getStatus());
 	}
 
-	private void cleanRelatedDataOnWorkItemDelete(Long workItemId) throws Exception {
+	private void cleanRelatedDataOnWorkItemDelete(Long workItemId) {
 		for (Issue issue : issueRepository.getIssuesByWorkItemId(workItemId))
 			issueRepository.removeById(issue.getId());
 	}
