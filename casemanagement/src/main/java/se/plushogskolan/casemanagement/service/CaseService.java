@@ -46,7 +46,7 @@ public class CaseService {
 		if (userFillsRequirements(user) && !isPersistedObject(user)) {
 			return userRepository.save(user);
 		} else {
-			throw new ServiceException("Username too short, team is full or object already exists" + user.toString());
+			throw new ServiceException(String.format("User with id: %d already exists", user.getId()));
 		}
 	}
 
