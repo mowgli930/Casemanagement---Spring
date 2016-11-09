@@ -1,34 +1,18 @@
 package se.plushogskolan.casemanagement.repository;
 
-import java.util.List;
-
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import se.plushogskolan.casemanagement.model.User;
 
 public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 
-	List<User> findByFirstNameContaining(String firstName);
+	Slice<User> findByFirstNameContaining(String firstName, PageRequest page);
 	
-	List<User> findByLastNameContaining(String lastName);
+	Slice<User> findByLastNameContaining(String lastName, PageRequest page);
 	
-	List<User> findByUsernameContaining(String username);
+	Slice<User> findByUsernameContaining(String username, PageRequest page);
 	
-	List<User> findByTeamId(Long id);
-
-	// void saveUser(User user) throws RepositoryException;
-	//
-	// void updateUser(User newValues) throws RepositoryException;
-	//
-	// void inactivateUserById(int userId) throws RepositoryException;
-	//
-	// void activateUserById(int userId) throws RepositoryException;
-	//
-	// User getUserById(int userId) throws RepositoryException;
-	//
-	// List<User> searchUsersBy(String firstName, String lastName, String
-	// username) throws RepositoryException;
-	//
-	// List<User> getUsersByTeamId(int teamId) throws RepositoryException;
-
+	Slice<User> findByTeamId(Long id, PageRequest page);
 }

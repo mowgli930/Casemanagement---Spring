@@ -141,24 +141,24 @@ public class CaseService {
 
 	}
 
-	public List<User> searchUsersByFirstName(String firstName) {
+	public Slice<User> searchUsersByFirstName(String firstName, PageRequest page) {
 
-		return userRepository.findByFirstNameContaining(firstName);
+		return userRepository.findByFirstNameContaining(firstName, page);
 	}
 
-	public List<User> searchUsersByLastName(String lastName) {
+	public Slice<User> searchUsersByLastName(String lastName, PageRequest page) {
 
-		return userRepository.findByLastNameContaining(lastName);
+		return userRepository.findByLastNameContaining(lastName, page);
 	}
 
-	public List<User> searchUsersByUsername(String username) {
+	public Slice<User> searchUsersByUsername(String username, PageRequest page) {
 
-		return userRepository.findByUsernameContaining(username);
+		return userRepository.findByUsernameContaining(username, page);
 	}
 
-	public List<User> getUsersByTeam(Long teamId) {
+	public Slice<User> getUsersByTeam(Long teamId, PageRequest page) {
 
-		return userRepository.findByTeamId(teamId);
+		return userRepository.findByTeamId(teamId, page);
 	}
 
 	// TEAM
@@ -377,8 +377,8 @@ public class CaseService {
 	}
 
 	private boolean teamHasSpaceForUser(Long teamId) {
-		List<User> users = userRepository.findByTeamId(teamId);
-		return users.size() < 10;
+		Slice<User> users = userRepository.findByTeamId(teamId, new PageRequest(10, 10));
+		return users.getSize() < 10;
 	}
 
 	// TODO Unused method, should be removed?
