@@ -370,14 +370,6 @@ public class CaseService {
 	}
 
 	private boolean teamHasSpaceForUser(Long teamId) {
-
-		if (teamId == 0) {
-			return true;
-		}
-		return numberOfUsersInTeamLessThanTen(teamId);
-	}
-
-	private boolean numberOfUsersInTeamLessThanTen(Long teamId) {
 		List<User> users = userRepository.findByTeamId(teamId);
 		return users.size() < 10;
 	}
