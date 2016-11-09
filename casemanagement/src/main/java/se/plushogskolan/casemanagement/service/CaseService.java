@@ -1,7 +1,5 @@
 package se.plushogskolan.casemanagement.service;
 
-import java.util.List;
-
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -372,14 +370,12 @@ public class CaseService {
 	}
 
 	private boolean teamHasSpaceForUser(Long teamId) {
-		Slice<User> users = userRepository.findByTeamId(teamId, new PageRequest(10, 10));
+		Slice<User> users = userRepository.findByTeamId(teamId, new PageRequest(0, 10));
 		return users.getSize() < 10;
 	}
 
-	//TODO Unused method, should be removed?
 	private void setStatusOfAllWorkItemsOfUserToUnstarted(Long userId) {
 		
-		//TODO How should the PageRequest look?
 		Slice<WorkItem> workItems = workItemRepository.findByUserId(userId, new PageRequest(10, 10));
 		for (WorkItem workItem : workItems) {
 			workItemRepository.updateStatusById(workItem.getId(), WorkItem.Status.UNSTARTED);
