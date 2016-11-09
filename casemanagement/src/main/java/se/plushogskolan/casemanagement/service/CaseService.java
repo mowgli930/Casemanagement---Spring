@@ -105,7 +105,7 @@ public class CaseService {
 			user.setActive(false);
 
 			setStatusOfAllWorkItemsOfUserToUnstarted(userId);
-			
+
 			return userRepository.save(user);
 
 		} else {
@@ -159,25 +159,26 @@ public class CaseService {
 		return userRepository.findByTeamId(teamId, page);
 	}
 
-	// // TEAM
+	// TEAM
 
-	@Transactional
 	public Team save(Team team) {
-		try {
+
+		if (!isPersistedObject(team)) {
 			return teamRepository.save(team);
-		} catch (Exception e) {
-			throw new ServiceException("Could not save Team: " + team.toString(), e);
+		} else {
+			throw new ServiceException("Team already exsists: " + team.getName());
 		}
+
 	}
 
 	@Transactional
 	public Team updateTeam(Long teamId, Team newValues) {
-		try {
+		if (teamRepository.exists(teamId)) {
 			Team team = teamRepository.findOne(teamId);
 			team.setActive(newValues.isActive()).setName(newValues.getName());
 			return teamRepository.save(team);
-		} catch (Exception e) {
-			throw new ServiceException("Could not update Team with id " + newValues.getId(), e);
+		} else {
+			throw new ServiceException("Could not update Team with id " + newValues.getId());
 		}
 	}
 
@@ -202,11 +203,18 @@ public class CaseService {
 			throw new ServiceException("Could not activate Team with id: " + teamId, e);
 		}
 	}
+	
+	public Team getTeam(Long teamId){
+		return teamRepository.findOne(teamId);
+	}
+	
+	public Slice<Team> searchTeamByName(String name){
+		return teamRepository.findByNameContaining(name);
+	}
 
-	public Page<Team> getAllTeams(int page, int size) {
+	public Slice<Team> getAllTeams(PageRequest pageRequest) {
 		try {
-			Page<Team> teams = (Page<Team>) teamRepository.findAll(new PageRequest(page, size));
-			return teams;
+			return teamRepository.findAll(pageRequest);
 		} catch (Exception e) {
 			throw new ServiceException("Could not retriev all Teams", e);
 		}
@@ -246,7 +254,7 @@ public class CaseService {
 					+ "\" on WorkItem with id: " + workItemId, e);
 		}
 	}
-	
+
 	public void deleteWorkItem(Long workItemId) {
 
 		try {
@@ -256,26 +264,26 @@ public class CaseService {
 		} catch (Exception e) {
 			throw new ServiceException("Could not delete WorkItem with id: " + workItemId, e);
 		}
-	 }
+	}
 
 	public void addWorkItemToUser(Long workItemId, Long userId) {
-	
-		 try {
-			 if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId,
-					 userId)) {
-				 workItemRepository.addWorkItemToUser(workItemId, userId);
-			 } else {
-				 throw new ServiceException("Could not add work item to user, either user is inactive or there is no space for additional work items");
-			 }
-		 } catch (Exception e) {
-			 throw new ServiceException("Could not add WorkItem " + workItemId + " to User " + userId, e);
-		 }
-	
-	 }
-	
+
+		try {
+			if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId, userId)) {
+				workItemRepository.addWorkItemToUser(workItemId, userId);
+			} else {
+				throw new ServiceException(
+						"Could not add work item to user, either user is inactive or there is no space for additional work items");
+			}
+		} catch (Exception e) {
+			throw new ServiceException("Could not add WorkItem " + workItemId + " to User " + userId, e);
+		}
+
+	}
+
 	public Slice<WorkItem> getWorkItemsByStatus(WorkItem.Status workItemStatus) {
 		try {
-			//TODO How should the PageRequest look?
+			// TODO How should the PageRequest look?
 			return workItemRepository.getWorkItemsByStatus(workItemStatus, new PageRequest(10, 10));
 		} catch (Exception e) {
 			throw new ServiceException("Could not WorkItems with status " + workItemStatus, e);
@@ -284,7 +292,7 @@ public class CaseService {
 
 	public Slice<WorkItem> getWorkItemsByTeamId(Long teamId) {
 		try {
-			//TODO How should the PageRequest look?
+			// TODO How should the PageRequest look?
 			return workItemRepository.getWorkItemsByTeamId(teamId, new PageRequest(10, 10));
 		} catch (Exception e) {
 			throw new ServiceException("Could not get WorkItem connected to Team id " + teamId, e);
@@ -293,7 +301,7 @@ public class CaseService {
 
 	public Slice<WorkItem> getWorkItemsByUserId(Long userId) {
 		try {
-			//TODO How should the PageRequest look?
+			// TODO How should the PageRequest look?
 			return workItemRepository.findByUserId(userId, new PageRequest(10, 10));
 		} catch (Exception e) {
 			throw new ServiceException("Could not WorkItem connected to User id " + userId, e);
@@ -302,7 +310,7 @@ public class CaseService {
 
 	public Slice<WorkItem> getWorkItemsWithIssue() {
 		try {
-			//TODO How should the PageRequest look?
+			// TODO How should the PageRequest look?
 			return workItemRepository.getWorkItemsWithIssue(new PageRequest(10, 10));
 		} catch (Exception e) {
 			throw new ServiceException("Could not WorkItems with Issues", e);
@@ -313,7 +321,10 @@ public class CaseService {
 
 	@Transactional
 	public Issue save(Issue issue) {
-		if (workItemIsDone(issue.getWorkitem().getId())) {
+		if (!workItemIsDone(issue.getWorkitem().getId())) {
+			if (isPersistedObject(issue)) {
+				throw new ServiceException("Issue already exsists");
+			}
 			issueRepository.save(issue);
 			WorkItem workItem = workItemRepository.findOne(issue.getWorkitem().getId());
 			workItem.setIssue(issue).setStatus(Status.UNSTARTED);
@@ -326,12 +337,12 @@ public class CaseService {
 
 	@Transactional
 	public Issue updateIssueDescription(Long issueId, String description) {
-		try {
+		if (issueRepository.exists(issueId)) {
 			Issue issue = issueRepository.findOne(issueId);
 			issue.setDescription(description);
 			return issueRepository.save(issue);
-		} catch (Exception e) {
-			throw new ServiceException("Could not change description of issue with id: " + issueId, e);
+		} else {
+			throw new ServiceException("Could not change description of issue with id: " + issueId);
 		}
 	}
 
@@ -344,14 +355,8 @@ public class CaseService {
 		}
 	}
 
-	@Transactional
-	public Page<Issue> getAllIssues(int page, int size) {
-		try {
-			Page<Issue> issues = (Page<Issue>) issueRepository.findAll(new PageRequest(page, size));
-			return issues;
-		} catch (Exception e) {
-			throw new ServiceException("Could not retrive issues", e);
-		}
+	public Slice<Issue> getAllIssues(PageRequest pageRequest) {
+			return issueRepository.findAll(pageRequest);
 	}
 
 	private boolean userFillsRequirements(User user) {
@@ -374,8 +379,15 @@ public class CaseService {
 		return users.getSize() < 10;
 	}
 
+<<<<<<< HEAD
 	private void setStatusOfAllWorkItemsOfUserToUnstarted(Long userId) {
 		
+=======
+	// TODO Unused method, should be removed?
+	private void setStatusOfAllWorkItemsOfUserToUnstarted(Long userId) {
+
+		// TODO How should the PageRequest look?
+>>>>>>> 422791f97c851105f3340a921c01710ab7a507af
 		Slice<WorkItem> workItems = workItemRepository.findByUserId(userId, new PageRequest(10, 10));
 		for (WorkItem workItem : workItems) {
 			workItemRepository.updateStatusById(workItem.getId(), WorkItem.Status.UNSTARTED);
@@ -389,7 +401,7 @@ public class CaseService {
 	}
 
 	private boolean userHasSpaceForAdditionalWorkItem(Long workItemId, Long userId) {
-		//TODO How should the PageRequest look?
+		// TODO How should the PageRequest look?
 		Slice<WorkItem> workItems = workItemRepository.findByUserId(userId, new PageRequest(10, 10));
 
 		if (workItems == null) {
