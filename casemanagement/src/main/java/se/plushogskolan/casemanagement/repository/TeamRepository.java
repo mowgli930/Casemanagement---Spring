@@ -9,8 +9,6 @@ import se.plushogskolan.casemanagement.model.Team;
 
 public interface TeamRepository extends PagingAndSortingRepository<Team, Long>{
 	
-	List<Team> findAll();
-	
 	Slice<Team> findByNameContaining(String name);
 	
 }
