@@ -1,7 +1,5 @@
 package se.plushogskolan.casemanagement.service;
 
-import java.util.List;
-
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,7 +105,7 @@ public class CaseService {
 			user.setActive(false);
 
 			setStatusOfAllWorkItemsOfUserToUnstarted(userId);
-
+			
 			return userRepository.save(user);
 
 		} else {
@@ -161,26 +159,25 @@ public class CaseService {
 		return userRepository.findByTeamId(teamId, page);
 	}
 
-	// TEAM
+	// // TEAM
 
+	@Transactional
 	public Team save(Team team) {
-
-		if (!isPersistedObject(team)) {
+		try {
 			return teamRepository.save(team);
-		} else {
-			throw new ServiceException("Team already exsists: " + team.getName());
+		} catch (Exception e) {
+			throw new ServiceException("Could not save Team: " + team.toString(), e);
 		}
-
 	}
 
 	@Transactional
 	public Team updateTeam(Long teamId, Team newValues) {
-		if (teamRepository.exists(teamId)) {
+		try {
 			Team team = teamRepository.findOne(teamId);
 			team.setActive(newValues.isActive()).setName(newValues.getName());
 			return teamRepository.save(team);
-		} else {
-			throw new ServiceException("Could not update Team with id " + newValues.getId());
+		} catch (Exception e) {
+			throw new ServiceException("Could not update Team with id " + newValues.getId(), e);
 		}
 	}
 
@@ -205,7 +202,7 @@ public class CaseService {
 			throw new ServiceException("Could not activate Team with id: " + teamId);
 		}
 	}
-
+	
 	public Team getTeam(Long teamId) {
 		return teamRepository.findOne(teamId);
 	}
@@ -252,7 +249,7 @@ public class CaseService {
 					+ "\" on WorkItem with id: " + workItemId, e);
 		}
 	}
-
+	
 	public void deleteWorkItem(Long workItemId) {
 
 		try {
@@ -262,26 +259,26 @@ public class CaseService {
 		} catch (Exception e) {
 			throw new ServiceException("Could not delete WorkItem with id: " + workItemId, e);
 		}
-	}
+	 }
 
 	public void addWorkItemToUser(Long workItemId, Long userId) {
-
-		try {
-			if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId, userId)) {
-				workItemRepository.addWorkItemToUser(workItemId, userId);
-			} else {
-				throw new ServiceException(
-						"Could not add work item to user, either user is inactive or there is no space for additional work items");
-			}
-		} catch (Exception e) {
-			throw new ServiceException("Could not add WorkItem " + workItemId + " to User " + userId, e);
-		}
-
-	}
-
+	
+		 try {
+			 if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId,
+					 userId)) {
+				 workItemRepository.addWorkItemToUser(workItemId, userId);
+			 } else {
+				 throw new ServiceException("Could not add work item to user, either user is inactive or there is no space for additional work items");
+			 }
+		 } catch (Exception e) {
+			 throw new ServiceException("Could not add WorkItem " + workItemId + " to User " + userId, e);
+		 }
+	
+	 }
+	
 	public Slice<WorkItem> getWorkItemsByStatus(WorkItem.Status workItemStatus) {
 		try {
-			// TODO How should the PageRequest look?
+			//TODO How should the PageRequest look?
 			return workItemRepository.getWorkItemsByStatus(workItemStatus, new PageRequest(10, 10));
 		} catch (Exception e) {
 			throw new ServiceException("Could not WorkItems with status " + workItemStatus, e);
@@ -290,7 +287,7 @@ public class CaseService {
 
 	public Slice<WorkItem> getWorkItemsByTeamId(Long teamId) {
 		try {
-			// TODO How should the PageRequest look?
+			//TODO How should the PageRequest look?
 			return workItemRepository.getWorkItemsByTeamId(teamId, new PageRequest(10, 10));
 		} catch (Exception e) {
 			throw new ServiceException("Could not get WorkItem connected to Team id " + teamId, e);
@@ -299,7 +296,7 @@ public class CaseService {
 
 	public Slice<WorkItem> getWorkItemsByUserId(Long userId) {
 		try {
-			// TODO How should the PageRequest look?
+			//TODO How should the PageRequest look?
 			return workItemRepository.findByUserId(userId, new PageRequest(10, 10));
 		} catch (Exception e) {
 			throw new ServiceException("Could not WorkItem connected to User id " + userId, e);
@@ -308,7 +305,7 @@ public class CaseService {
 
 	public Slice<WorkItem> getWorkItemsWithIssue() {
 		try {
-			// TODO How should the PageRequest look?
+			//TODO How should the PageRequest look?
 			return workItemRepository.getWorkItemsWithIssue(new PageRequest(10, 10));
 		} catch (Exception e) {
 			throw new ServiceException("Could not WorkItems with Issues", e);
@@ -319,10 +316,7 @@ public class CaseService {
 
 	@Transactional
 	public Issue save(Issue issue) {
-		if (!workItemIsDone(issue.getWorkitem().getId())) {
-			if (isPersistedObject(issue)) {
-				throw new ServiceException("Issue already exsists");
-			}
+		if (workItemIsDone(issue.getWorkitem().getId())) {
 			issueRepository.save(issue);
 			WorkItem workItem = workItemRepository.findOne(issue.getWorkitem().getId());
 			workItem.setIssue(issue).setStatus(Status.UNSTARTED);
@@ -335,23 +329,22 @@ public class CaseService {
 
 	@Transactional
 	public Issue updateIssueDescription(Long issueId, String description) {
-		if (issueRepository.exists(issueId)) {
+		try {
 			Issue issue = issueRepository.findOne(issueId);
 			issue.setDescription(description);
 			return issueRepository.save(issue);
-		} else {
-			throw new ServiceException("Could not change description of issue with id: " + issueId);
+		} catch (Exception e) {
+			throw new ServiceException("Could not change description of issue with id: " + issueId, e);
 		}
 	}
 
-	@Transactional
 	public Issue getIssue(Long id) {
 		return issueRepository.findOne(id);
 	}
 
 	public Slice<Issue> getAllIssues(PageRequest pageRequest) {
 		return issueRepository.findAll(pageRequest);
-	}
+	}	
 
 	private boolean userFillsRequirements(User user) {
 		if (!usernameLongEnough(user.getUsername())) {
@@ -369,14 +362,12 @@ public class CaseService {
 	}
 
 	private boolean teamHasSpaceForUser(Long teamId) {
-		Slice<User> users = userRepository.findByTeamId(teamId, new PageRequest(10, 10));
+		Slice<User> users = userRepository.findByTeamId(teamId, new PageRequest(0, 10));
 		return users.getSize() < 10;
 	}
 
-	// TODO Unused method, should be removed?
 	private void setStatusOfAllWorkItemsOfUserToUnstarted(Long userId) {
-
-		// TODO How should the PageRequest look?
+		
 		Slice<WorkItem> workItems = workItemRepository.findByUserId(userId, new PageRequest(10, 10));
 		for (WorkItem workItem : workItems) {
 			workItemRepository.updateStatusById(workItem.getId(), WorkItem.Status.UNSTARTED);
@@ -390,7 +381,7 @@ public class CaseService {
 	}
 
 	private boolean userHasSpaceForAdditionalWorkItem(Long workItemId, Long userId) {
-		// TODO How should the PageRequest look?
+		//TODO How should the PageRequest look?
 		Slice<WorkItem> workItems = workItemRepository.findByUserId(userId, new PageRequest(10, 10));
 
 		if (workItems == null) {
