@@ -186,40 +186,36 @@ public class CaseService {
 
 	@Transactional
 	public Team inactivateTeam(Long teamId) {
-		try {
-			Team team = teamRepository.findOne(teamId);
+		Team team = teamRepository.findOne(teamId);
+		if (team.isActive() == true) {
 			team.setActive(false);
 			return teamRepository.save(team);
-		} catch (Exception e) {
-			throw new ServiceException("Could not inactivate Team with id: " + teamId, e);
+		} else {
+			throw new ServiceException("Team is already inactive");
 		}
 	}
 
 	@Transactional
 	public Team activateTeam(Long teamId) {
-		try {
-			Team team = teamRepository.findOne(teamId);
+		Team team = teamRepository.findOne(teamId);
+		if (team.isActive() == false) {
 			team.setActive(true);
 			return teamRepository.save(team);
-		} catch (Exception e) {
-			throw new ServiceException("Could not activate Team with id: " + teamId, e);
+		} else {
+			throw new ServiceException("Could not activate Team with id: " + teamId);
 		}
 	}
-	
-	public Team getTeam(Long teamId){
+
+	public Team getTeam(Long teamId) {
 		return teamRepository.findOne(teamId);
 	}
-	
-	public Slice<Team> searchTeamByName(String name){
+
+	public Slice<Team> searchTeamByName(String name) {
 		return teamRepository.findByNameContaining(name);
 	}
 
 	public Slice<Team> getAllTeams(PageRequest pageRequest) {
-		try {
 			return teamRepository.findAll(pageRequest);
-		} catch (Exception e) {
-			throw new ServiceException("Could not retriev all Teams", e);
-		}
 	}
 
 	@Transactional
@@ -350,15 +346,11 @@ public class CaseService {
 
 	@Transactional
 	public Issue getIssue(Long id) {
-		try {
-			return issueRepository.findOne(id);
-		} catch (Exception e) {
-			throw new ServiceException("Could not find issue with id: " + id, e);
-		}
+		return issueRepository.findOne(id);
 	}
 
 	public Slice<Issue> getAllIssues(PageRequest pageRequest) {
-			return issueRepository.findAll(pageRequest);
+		return issueRepository.findAll(pageRequest);
 	}
 
 	private boolean userFillsRequirements(User user) {
