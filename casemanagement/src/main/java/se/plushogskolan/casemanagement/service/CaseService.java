@@ -386,7 +386,7 @@ public class CaseService {
 		}
 	}
 
-	private boolean userIsActive(Long userId) throws Exception {
+	private boolean userIsActive(Long userId) {
 
 		User user = userRepository.findOne(userId);
 		return user.isActive();
