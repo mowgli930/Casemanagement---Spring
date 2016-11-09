@@ -392,7 +392,7 @@ public class CaseService {
 		return user.isActive();
 	}
 
-	private boolean userHasSpaceForAdditionalWorkItem(Long workItemId, Long userId) throws Exception {
+	private boolean userHasSpaceForAdditionalWorkItem(Long workItemId, Long userId) {
 		//TODO How should the PageRequest look?
 		Slice<WorkItem> workItems = workItemRepository.findByUserId(userId, new PageRequest(10, 10));
 
