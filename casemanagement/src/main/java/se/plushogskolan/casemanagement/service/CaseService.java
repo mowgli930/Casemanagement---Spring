@@ -252,7 +252,8 @@ public class CaseService {
 	}
 
 	public void addWorkItemToUser(Long workItemId, Long userId) {
-		if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId, userId, new PageRequest(5, 5))) {
+		//PageRequest(0, 5) because if page 0 has 5 entries the method will throw a ServiceException as desired
+		if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId, userId, new PageRequest(0, 5))) {
 			workItemRepository.addWorkItemToUser(workItemId, userId);
 		}
 	}
