@@ -106,6 +106,8 @@ public class CaseService {
 
 			user.setActive(false);
 
+			setStatusOfAllWorkItemsOfUserToUnstarted(userId);
+			
 			return userRepository.save(user);
 
 		} else {
@@ -375,7 +377,7 @@ public class CaseService {
 	}
 
 	//TODO Unused method, should be removed?
-	private void setStatusOfAllWorkItemsOfUserToUnstarted(Long userId) throws Exception {
+	private void setStatusOfAllWorkItemsOfUserToUnstarted(Long userId) {
 		
 		//TODO How should the PageRequest look?
 		Slice<WorkItem> workItems = workItemRepository.findByUserId(userId, new PageRequest(10, 10));
