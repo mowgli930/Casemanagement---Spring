@@ -415,8 +415,8 @@ public class CaseService {
 	}
 
 	private boolean teamHasSpaceForUser(Long teamId) {
-		Slice<User> users = userRepository.findByTeamId(teamId, new PageRequest(0, 10));
-		return users.getSize() < 10;
+		
+		return userRepository.countByTeamId(teamId) < 10;
 	}
 
 	private void setStatusOfAllWorkItemsOfUserToUnstarted(Long userId) {

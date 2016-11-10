@@ -15,4 +15,6 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 	Slice<User> findByUsernameContaining(String username, PageRequest page);
 	
 	Slice<User> findByTeamId(Long id, PageRequest page);
+	
+	Long countByTeamId(Long id);
 }
