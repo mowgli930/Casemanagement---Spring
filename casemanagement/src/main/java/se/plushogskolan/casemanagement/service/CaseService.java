@@ -53,13 +53,6 @@ public class CaseService {
 		} catch (Exception e) {
 			throw new ServiceException("User couldnt be saved : " + user.getUsername());
 		}
-
-		// if (userFillsRequirements(user) && !isPersistedObject(user)) {
-		// return userRepository.save(user);
-		// } else {
-		// throw new ServiceException(String.format("User with id: %d already
-		// exists", user.getId()));
-		// }
 	}
 
 	@Transactional
@@ -340,10 +333,10 @@ public class CaseService {
 
 	private boolean userFillsRequirements(User user) {
 		if (!usernameLongEnough(user.getUsername())) {
-			throw new ServiceException("Username is too short.");
+			return false;
 		}
 		if (user.getTeam() != null && !teamHasSpaceForUser(user.getTeam().getId())) {
-			throw new ServiceException("Team has no space for additional user");
+			return false;
 		}
 		return true;
 	}
@@ -372,7 +365,7 @@ public class CaseService {
 		if (user.isActive())
 			return true;
 		else
-			throw new ServiceException("User is not active");
+			return false;
 	}
 
 	private boolean userHasSpaceForAdditionalWorkItem(Long workItemId, Long userId, Pageable pageable) {
@@ -390,7 +383,7 @@ public class CaseService {
 		if (workItems.getSize() < 5)
 			return true;
 		else
-			throw new ServiceException("User does not have space for additional WorkItems");
+			return false;
 	}
 
 	private boolean workItemIsDone(Long workItemId) {
