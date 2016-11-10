@@ -42,9 +42,9 @@ public class CaseService {
 	public User save(User user) {
 
 		if (!userFillsRequirements(user)) {
-			throw new ServiceException(String.format("Usename is to short", user.getId()));
+			throw new ServiceException("Username is to short or team is full");
 		}
-		if(isPersistedObject(user)){
+		if (isPersistedObject(user)) {
 			throw new ServiceException(String.format("User with id: %d already exists", user.getId()));
 		}
 
@@ -57,66 +57,87 @@ public class CaseService {
 
 	@Transactional
 	public User updateUserFirstName(Long userId, String firstName) {
+		try {
 
-		if (userRepository.exists(userId)) {
+			if (userRepository.exists(userId)) {
 
-			User user = userRepository.findOne(userId);
+				User user = userRepository.findOne(userId);
 
-			user.setFirstName(firstName);
+				user.setFirstName(firstName);
 
-			return userRepository.save(user);
+				return userRepository.save(user);
 
-		} else {
-			throw new ServiceException("User doesnt exist :" + userId);
+			} else {
+				throw new ServiceException("User doesnt exist :" + userId);
+			}
+		} catch (Exception e) {
+			throw new ServiceException("User couldnt be updated");
 		}
 	}
 
 	@Transactional
 	public User updateUserLastName(Long userId, String lastName) {
 
-		if (userRepository.exists(userId)) {
-			User user = userRepository.findOne(userId);
+		try {
+			if (userRepository.exists(userId)) {
+				User user = userRepository.findOne(userId);
 
-			user.setLastName(lastName);
+				user.setLastName(lastName);
 
-			return userRepository.save(user);
+				return userRepository.save(user);
 
-		} else {
-			throw new ServiceException("User doesnt exist :" + userId);
+			} else {
+				throw new ServiceException("User doesnt exist :" + userId);
+			}
+		} catch (Exception e) {
+			throw new ServiceException("User couldnt be updated");
 		}
 	}
 
 	@Transactional
 	public User updateUserUsername(Long userId, String username) {
 
-		if (usernameLongEnough(username) && userRepository.exists(userId)) {
+		if (!usernameLongEnough(username)) {
+			throw new ServiceException("Username not long enogh!");
+		}
 
-			User user = userRepository.findOne(userId);
+		try {
+			if (userRepository.exists(userId)) {
 
-			user.setUsername(username);
+				User user = userRepository.findOne(userId);
 
-			return userRepository.save(user);
+				user.setUsername(username);
 
-		} else {
-			throw new ServiceException("User doesnt exist or username to long :" + userId);
+				return userRepository.save(user);
+
+			} else {
+				throw new ServiceException("User doesnt exist or username to long :" + userId);
+			}
+		} catch (Exception e) {
+			throw new ServiceException("User couldnt be updated");
 		}
 	}
 
 	@Transactional
 	public User inactivateUser(Long userId) {
 
-		if (userRepository.exists(userId)) {
+		try {
 
-			User user = userRepository.findOne(userId);
+			if (userRepository.exists(userId)) {
 
-			user.setActive(false);
+				User user = userRepository.findOne(userId);
 
-			setStatusOfAllWorkItemsOfUserToUnstarted(userId);
+				user.setActive(false);
 
-			return userRepository.save(user);
+				setStatusOfAllWorkItemsOfUserToUnstarted(userId);
 
-		} else {
-			throw new ServiceException("User doesnt exists :" + userId);
+				return userRepository.save(user);
+
+			} else {
+				throw new ServiceException("User doesnt exists :" + userId);
+			}
+		} catch (Exception e) {
+			throw new ServiceException("User couldnt be updated");
 		}
 	}
 
@@ -353,7 +374,7 @@ public class CaseService {
 
 	private void setStatusOfAllWorkItemsOfUserToUnstarted(Long userId) {
 
-		Slice<WorkItem> workItems = workItemRepository.findByUserId(userId, new PageRequest(10, 10));
+		Slice<WorkItem> workItems = workItemRepository.findByUserId(userId, new PageRequest(0, 5));
 		for (WorkItem workItem : workItems) {
 			workItemRepository.updateStatusById(workItem.getId(), WorkItem.Status.UNSTARTED);
 		}
