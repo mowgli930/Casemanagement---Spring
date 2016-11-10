@@ -110,12 +110,14 @@ public class CaseService {
 
 				return userRepository.save(user);
 
-			} else {
-				throw new ServiceException("User doesnt exist or username to long :" + userId);
 			}
-		} catch (Exception e) {
+		} catch (IllegalArgumentException e) {
 			throw new ServiceException("User couldnt be updated");
+		} catch(/*JpaMotherDoesntLoveYou*/Exception e) {
+			throw new ServiceException("User did not exist or something...");
 		}
+		
+		return null;
 	}
 
 	@Transactional
