@@ -57,40 +57,38 @@ public class CaseService {
 
 	@Transactional
 	public User updateUserFirstName(Long userId, String firstName) {
-		try {
-
-			if (userRepository.exists(userId)) {
-
+		if (userRepository.exists(userId)) {
+			try {
 				User user = userRepository.findOne(userId);
 
 				user.setFirstName(firstName);
 
 				return userRepository.save(user);
 
-			} else {
-				throw new ServiceException("User doesnt exist :" + userId);
+			} catch (Exception e) {
+				throw new ServiceException("User couldnt be updated");
 			}
-		} catch (Exception e) {
-			throw new ServiceException("User couldnt be updated");
+		} else {
+			throw new ServiceException("User doesnt exist :" + userId);
 		}
 	}
 
 	@Transactional
 	public User updateUserLastName(Long userId, String lastName) {
 
-		try {
-			if (userRepository.exists(userId)) {
+		if (userRepository.exists(userId)) {
+			try {
 				User user = userRepository.findOne(userId);
 
 				user.setLastName(lastName);
 
 				return userRepository.save(user);
 
-			} else {
-				throw new ServiceException("User doesnt exist :" + userId);
+			} catch (Exception e) {
+				throw new ServiceException("User couldnt be updated");
 			}
-		} catch (Exception e) {
-			throw new ServiceException("User couldnt be updated");
+		} else {
+			throw new ServiceException("User doesnt exist :" + userId);
 		}
 	}
 
@@ -103,27 +101,26 @@ public class CaseService {
 
 		if (userRepository.exists(userId)) {
 			try {
-	
-					User user = userRepository.findOne(userId);
-	
-					user.setUsername(username);
-	
-					return userRepository.save(user);
-	
-			} catch (/*MoreSpecific*/Exception e) {
+
+				User user = userRepository.findOne(userId);
+
+				user.setUsername(username);
+
+				return userRepository.save(user);
+
+			} catch (/* MoreSpecific */Exception e) {
 				throw new ServiceException("User couldnt be updated");
 			}
-		}
-		else
+		} else
 			throw new ServiceException("User could not be updated");
 	}
 
 	@Transactional
 	public User inactivateUser(Long userId) {
 
-		try {
+		if (userRepository.exists(userId)) {
 
-			if (userRepository.exists(userId)) {
+			try {
 
 				User user = userRepository.findOne(userId);
 
@@ -133,11 +130,11 @@ public class CaseService {
 
 				return userRepository.save(user);
 
-			} else {
-				throw new ServiceException("User doesnt exists :" + userId);
+			} catch (Exception e) {
+				throw new ServiceException("User couldnt be updated");
 			}
-		} catch (Exception e) {
-			throw new ServiceException("User couldnt be updated");
+		} else {
+			throw new ServiceException("User doesnt exists :" + userId);
 		}
 	}
 
@@ -145,13 +142,17 @@ public class CaseService {
 	public User activateUser(Long userId) {
 
 		if (userRepository.exists(userId)) {
-
-			User user = userRepository.findOne(userId);
-
-			user.setActive(true);
-
-			return userRepository.save(user);
-
+			
+			try {
+				
+				User user = userRepository.findOne(userId);
+				
+				user.setActive(true);
+				
+				return userRepository.save(user);
+			} catch (Exception e) {
+				throw new ServiceException("User could not be updated");
+			}
 		} else {
 			throw new ServiceException("User doesnt exists :" + userId);
 		}
@@ -191,7 +192,11 @@ public class CaseService {
 
 	public Team save(Team team) {
 		if (!isPersistedObject(team)) {
-			return teamRepository.save(team);
+			try {
+				return teamRepository.save(team);				
+			} catch (Exception e) {
+				throw new ServiceException("Team could not be saved");
+			}
 		} else {
 			throw new ServiceException("Team already exsist");
 		}
@@ -200,9 +205,13 @@ public class CaseService {
 	@Transactional
 	public Team updateTeam(Long teamId, Team newValues) {
 		if (teamRepository.exists(teamId)) {
-			Team team = teamRepository.findOne(teamId);
-			team.setActive(newValues.isActive()).setName(newValues.getName());
-			return teamRepository.save(team);
+			try {
+				Team team = teamRepository.findOne(teamId);
+				team.setActive(newValues.isActive()).setName(newValues.getName());
+				return teamRepository.save(team);
+			} catch (Exception e) {
+				throw new ServiceException("Could not update Team");
+			}
 		} else {
 			throw new ServiceException("Team does not exsist");
 		}
@@ -212,8 +221,12 @@ public class CaseService {
 	public Team inactivateTeam(Long teamId) {
 		Team team = teamRepository.findOne(teamId);
 		if (team.isActive() == true) {
-			team.setActive(false);
-			return teamRepository.save(team);
+			try {
+				team.setActive(false);
+				return teamRepository.save(team);
+			} catch (Exception e) {
+				throw new ServiceException("Team could not be inactivated");
+			}
 		} else {
 			throw new ServiceException("Team is already inactive");
 		}
@@ -223,8 +236,12 @@ public class CaseService {
 	public Team activateTeam(Long teamId) {
 		Team team = teamRepository.findOne(teamId);
 		if (team.isActive() == false) {
-			team.setActive(true);
-			return teamRepository.save(team);
+			try {
+				team.setActive(true);
+				return teamRepository.save(team);
+			} catch (Exception e) {
+				throw new ServiceException("Team could not be activated");
+			}
 		} else {
 			throw new ServiceException("Could not activate Team with id: " + teamId);
 		}
@@ -245,10 +262,15 @@ public class CaseService {
 	@Transactional
 	public void addUserToTeam(Long userId, Long teamId) {
 		if (teamHasSpaceForUser(teamId)) {
-			Team team = teamRepository.findOne(teamId);
-			User user = userRepository.findOne(userId);
-			team.addUser(user);
-			teamRepository.save(team);
+			try {
+				Team team = teamRepository.findOne(teamId);
+				User user = userRepository.findOne(userId);
+				team.addUser(user);
+				teamRepository.save(team);
+				//Has several possible exceptions probably
+			} catch (Exception e) {
+				throw new ServiceException("User could not be added to Team");
+			}
 		} else {
 			throw new ServiceException("No space in team for user. userId = " + userId + "teamId = " + teamId);
 		}
@@ -257,23 +279,34 @@ public class CaseService {
 	// WORKITEM
 
 	public WorkItem save(WorkItem workItem) {
-		if (!isPersistedObject(workItem))
+		if (isPersistedObject(workItem))
+			throw new ServiceException("WorkItem already exists");
+		try {
 			return workItemRepository.save(workItem);
-		else
-			throw new ServiceException("Could not save WorkItem");
+		} catch (Exception e) {
+			throw new ServiceException("WorkItem could not be saved");
+		}
 	}
 
 	public void updateStatusById(Long workItemId, WorkItem.Status workItemStatus) {
 		if (workItemRepository.exists(workItemId))
-			workItemRepository.updateStatusById(workItemId, workItemStatus);
+			try {
+				workItemRepository.updateStatusById(workItemId, workItemStatus);
+			} catch (Exception e) {
+				throw new ServiceException("This WorkItem could not be updated");
+			}
 		else
 			throw new ServiceException("This WorkItem does not exist");
 	}
 
 	public void deleteWorkItem(Long workItemId) {
 		if (workItemRepository.exists(workItemId)) {
-			workItemRepository.delete(workItemId);
-			cleanRelatedDataOnWorkItemDelete(workItemId);
+			try {
+				workItemRepository.delete(workItemId);
+				cleanRelatedDataOnWorkItemDelete(workItemId);
+			} catch (Exception e) {
+				throw new ServiceException("WorkItem could not be deleted");
+			}
 		} else
 			throw new ServiceException("This WorkItem does not exist");
 	}
@@ -282,8 +315,14 @@ public class CaseService {
 		// PageRequest(0, 5) because if page 0 has 5 entries the method will
 		// throw a ServiceException as desired
 		if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId, userId, new PageRequest(0, 5))) {
-			workItemRepository.addWorkItemToUser(workItemId, userId);
+			try {
+				workItemRepository.addWorkItemToUser(workItemId, userId);				
+			} catch (Exception e) {
+				throw new ServiceException("Could not add WorkItem to User");
+			}
 		}
+		else
+			throw new ServiceException("User is either inactive or has no space for additional WorkItems");
 	}
 
 	public Slice<WorkItem> getWorkItemsByStatus(WorkItem.Status workItemStatus, Pageable pageable) {
@@ -323,11 +362,15 @@ public class CaseService {
 	@Transactional
 	public Issue save(Issue issue) {
 		if (workItemIsDone(issue.getWorkitem().getId())) {
-			issueRepository.save(issue);
-			WorkItem workItem = workItemRepository.findOne(issue.getWorkitem().getId());
-			workItem.setIssue(issue).setStatus(Status.UNSTARTED);
-			workItemRepository.save(workItem);
-			return issue;
+			try {
+				issueRepository.save(issue);
+				WorkItem workItem = workItemRepository.findOne(issue.getWorkitem().getId());
+				workItem.setIssue(issue).setStatus(Status.UNSTARTED);
+				workItemRepository.save(workItem);
+				return issue;
+			} catch (Exception e) {
+				throw new ServiceException("Issue could not be saved");
+			}
 		} else {
 			throw new ServiceException("WorkItem does not have status done");
 		}
@@ -336,9 +379,13 @@ public class CaseService {
 	@Transactional
 	public Issue updateIssueDescription(Long issueId, String description) {
 		if (issueRepository.exists(issueId)) {
-			Issue issue = issueRepository.findOne(issueId);
-			issue.setDescription(description);
-			return issueRepository.save(issue);
+			try {
+				Issue issue = issueRepository.findOne(issueId);
+				issue.setDescription(description);
+				return issueRepository.save(issue);
+			} catch (Exception e) {
+				throw new ServiceException("Issue could not be updated");
+			}
 		} else {
 			throw new ServiceException("Could not change description of issue with id: " + issueId);
 		}
