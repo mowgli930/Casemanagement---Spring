@@ -18,6 +18,8 @@ public interface WorkItemRepository extends PagingAndSortingRepository<WorkItem,
 	@Query("UPDATE #{#entityName} wi SET wi.user.id = :userId WHERE wi.id = :workItemId")
 	void addWorkItemToUser(@Param("workItemId") Long workItemId, @Param("userId") Long userId);
 	
+	Slice<WorkItem> findByDescriptionContaining(String description, Pageable pageable);
+	
 	@Query("SELECT wi FROM #{#entityName} wi WHERE wi.status = :status")
 	Slice<WorkItem> getWorkItemsByStatus(@Param("status") WorkItem.Status workItemStatus, Pageable pageable);
 
