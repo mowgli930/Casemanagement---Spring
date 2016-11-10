@@ -41,7 +41,10 @@ public class CaseService {
 
 	public User save(User user) {
 
-		if (!userFillsRequirements(user) && isPersistedObject(user)) {
+		if (!userFillsRequirements(user)) {
+			throw new ServiceException(String.format("Usename is to short", user.getId()));
+		}
+		if(isPersistedObject(user)){
 			throw new ServiceException(String.format("User with id: %d already exists", user.getId()));
 		}
 
