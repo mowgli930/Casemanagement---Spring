@@ -3,6 +3,7 @@ package se.plushogskolan.casemanagement.service;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -283,7 +284,7 @@ public class CaseService {
 			throw new ServiceException("WorkItem already exists");
 		try {
 			return workItemRepository.save(workItem);
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			throw new ServiceException("WorkItem could not be saved");
 		}
 	}
@@ -292,7 +293,7 @@ public class CaseService {
 		if (workItemRepository.exists(workItemId))
 			try {
 				workItemRepository.updateStatusById(workItemId, workItemStatus);
-			} catch (Exception e) {
+			} catch (DataAccessException e) {
 				throw new ServiceException("This WorkItem could not be updated");
 			}
 		else
@@ -304,7 +305,7 @@ public class CaseService {
 			try {
 				workItemRepository.delete(workItemId);
 				cleanRelatedDataOnWorkItemDelete(workItemId);
-			} catch (Exception e) {
+			} catch (DataAccessException e) {
 				throw new ServiceException("WorkItem could not be deleted");
 			}
 		} else
@@ -317,7 +318,7 @@ public class CaseService {
 		if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId, userId, new PageRequest(0, 5))) {
 			try {
 				workItemRepository.addWorkItemToUser(workItemId, userId);				
-			} catch (Exception e) {
+			} catch (DataAccessException e) {
 				throw new ServiceException("Could not add WorkItem to User");
 			}
 		}
@@ -332,7 +333,7 @@ public class CaseService {
 	public Slice<WorkItem> getWorkItemsByStatus(WorkItem.Status workItemStatus, Pageable pageable) {
 		try {
 			return workItemRepository.getWorkItemsByStatus(workItemStatus, pageable);
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			throw new ServiceException("Could not WorkItems with status " + workItemStatus, e);
 		}
 	}
@@ -340,7 +341,7 @@ public class CaseService {
 	public Slice<WorkItem> getWorkItemsByTeamId(Long teamId, Pageable pageable) {
 		try {
 			return workItemRepository.getWorkItemsByTeamId(teamId, pageable);
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			throw new ServiceException("Could not get WorkItem connected to Team id " + teamId, e);
 		}
 	}
@@ -348,7 +349,7 @@ public class CaseService {
 	public Slice<WorkItem> getWorkItemsByUserId(Long userId, Pageable pageable) {
 		try {
 			return workItemRepository.findByUserId(userId, pageable);
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			throw new ServiceException("Could not WorkItem connected to User id " + userId, e);
 		}
 	}
@@ -356,7 +357,7 @@ public class CaseService {
 	public Slice<WorkItem> getWorkItemsWithIssue(Pageable pageable) {
 		try {
 			return workItemRepository.getWorkItemsWithIssue(pageable);
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			throw new ServiceException("Could not WorkItems with Issues", e);
 		}
 	}
