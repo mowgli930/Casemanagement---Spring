@@ -41,11 +41,22 @@ public class CaseService {
 
 	public User save(User user) {
 
-		if (userFillsRequirements(user) && !isPersistedObject(user)) {
-			return userRepository.save(user);
-		} else {
+		if (!userFillsRequirements(user) && isPersistedObject(user)) {
 			throw new ServiceException(String.format("User with id: %d already exists", user.getId()));
 		}
+
+		try {
+			return userRepository.save(user);
+		} catch (Exception e) {
+			throw new ServiceException("User couldnt be saved : " + user.getUsername());
+		}
+
+		// if (userFillsRequirements(user) && !isPersistedObject(user)) {
+		// return userRepository.save(user);
+		// } else {
+		// throw new ServiceException(String.format("User with id: %d already
+		// exists", user.getId()));
+		// }
 	}
 
 	@Transactional
@@ -229,30 +240,30 @@ public class CaseService {
 	// WORKITEM
 
 	public WorkItem save(WorkItem workItem) {
-		if(!isPersistedObject(workItem))
+		if (!isPersistedObject(workItem))
 			return workItemRepository.save(workItem);
 		else
 			throw new ServiceException("Could not save WorkItem");
 	}
 
 	public void updateStatusById(Long workItemId, WorkItem.Status workItemStatus) {
-		if(workItemRepository.exists(workItemId))
+		if (workItemRepository.exists(workItemId))
 			workItemRepository.updateStatusById(workItemId, workItemStatus);
 		else
 			throw new ServiceException("This WorkItem does not exist");
 	}
 
 	public void deleteWorkItem(Long workItemId) {
-		if(workItemRepository.exists(workItemId)) {
+		if (workItemRepository.exists(workItemId)) {
 			workItemRepository.delete(workItemId);
-			cleanRelatedDataOnWorkItemDelete(workItemId);			
-		}
-		else
+			cleanRelatedDataOnWorkItemDelete(workItemId);
+		} else
 			throw new ServiceException("This WorkItem does not exist");
 	}
 
 	public void addWorkItemToUser(Long workItemId, Long userId) {
-		//PageRequest(0, 5) because if page 0 has 5 entries the method will throw a ServiceException as desired
+		// PageRequest(0, 5) because if page 0 has 5 entries the method will
+		// throw a ServiceException as desired
 		if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId, userId, new PageRequest(0, 5))) {
 			workItemRepository.addWorkItemToUser(workItemId, userId);
 		}
@@ -355,7 +366,7 @@ public class CaseService {
 	private boolean userIsActive(Long userId) {
 
 		User user = userRepository.findOne(userId);
-		if(user.isActive())
+		if (user.isActive())
 			return true;
 		else
 			throw new ServiceException("User is not active");
@@ -373,7 +384,7 @@ public class CaseService {
 				return true;
 			}
 		}
-		if(workItems.getSize() < 5)
+		if (workItems.getSize() < 5)
 			return true;
 		else
 			throw new ServiceException("User does not have space for additional WorkItems");
