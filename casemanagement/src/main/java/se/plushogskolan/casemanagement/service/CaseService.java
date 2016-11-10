@@ -101,23 +101,21 @@ public class CaseService {
 			throw new ServiceException("Username not long enogh!");
 		}
 
-		try {
-			if (userRepository.exists(userId)) {
-
-				User user = userRepository.findOne(userId);
-
-				user.setUsername(username);
-
-				return userRepository.save(user);
-
+		if (userRepository.exists(userId)) {
+			try {
+	
+					User user = userRepository.findOne(userId);
+	
+					user.setUsername(username);
+	
+					return userRepository.save(user);
+	
+			} catch (/*MoreSpecific*/Exception e) {
+				throw new ServiceException("User couldnt be updated");
 			}
-		} catch (IllegalArgumentException e) {
-			throw new ServiceException("User couldnt be updated");
-		} catch(/*JpaMotherDoesntLoveYou*/Exception e) {
-			throw new ServiceException("User did not exist or something...");
 		}
-		
-		return null;
+		else
+			throw new ServiceException("User could not be updated");
 	}
 
 	@Transactional
