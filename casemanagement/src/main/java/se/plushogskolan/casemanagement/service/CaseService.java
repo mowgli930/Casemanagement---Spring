@@ -324,6 +324,10 @@ public class CaseService {
 		else
 			throw new ServiceException("User is either inactive or has no space for additional WorkItems");
 	}
+	
+	public Slice<WorkItem> searchWorkItemByDescription(String description, Pageable pageable) {
+		return workItemRepository.findByDescriptionContaining(description, pageable);
+	}
 
 	public Slice<WorkItem> getWorkItemsByStatus(WorkItem.Status workItemStatus, Pageable pageable) {
 		try {
