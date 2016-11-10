@@ -1,7 +1,5 @@
 package se.plushogskolan.casemanagement.repository;
 
-import java.util.List;
-
 import org.springframework.data.domain.Slice;
 import org.springframework.data.repository.PagingAndSortingRepository;
 

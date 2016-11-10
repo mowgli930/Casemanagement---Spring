@@ -143,13 +143,13 @@ public class CaseService {
 	public User activateUser(Long userId) {
 
 		if (userRepository.exists(userId)) {
-			
+
 			try {
-				
+
 				User user = userRepository.findOne(userId);
-				
+
 				user.setActive(true);
-				
+
 				return userRepository.save(user);
 			} catch (Exception e) {
 				throw new ServiceException("User could not be updated");
@@ -194,8 +194,8 @@ public class CaseService {
 	public Team save(Team team) {
 		if (!isPersistedObject(team)) {
 			try {
-				return teamRepository.save(team);				
-			} catch (Exception e) {
+				return teamRepository.save(team);
+			} catch (DataAccessException e) {
 				throw new ServiceException("Team could not be saved");
 			}
 		} else {
@@ -210,7 +210,7 @@ public class CaseService {
 				Team team = teamRepository.findOne(teamId);
 				team.setActive(newValues.isActive()).setName(newValues.getName());
 				return teamRepository.save(team);
-			} catch (Exception e) {
+			} catch (DataAccessException e) {
 				throw new ServiceException("Could not update Team");
 			}
 		} else {
@@ -225,7 +225,7 @@ public class CaseService {
 			try {
 				team.setActive(false);
 				return teamRepository.save(team);
-			} catch (Exception e) {
+			} catch (DataAccessException e) {
 				throw new ServiceException("Team could not be inactivated");
 			}
 		} else {
@@ -235,45 +235,57 @@ public class CaseService {
 
 	@Transactional
 	public Team activateTeam(Long teamId) {
-		Team team = teamRepository.findOne(teamId);
-		if (team.isActive() == false) {
-			try {
+		try {
+			Team team = teamRepository.findOne(teamId);
+			if (team.isActive() == false) {
 				team.setActive(true);
 				return teamRepository.save(team);
-			} catch (Exception e) {
-				throw new ServiceException("Team could not be activated");
+			} else {
+				throw new ServiceException("Could not activate Team with id: " + teamId);
 			}
-		} else {
-			throw new ServiceException("Could not activate Team with id: " + teamId);
+		} catch (DataAccessException e) {
+			throw new ServiceException("Team could not be activated");
 		}
 	}
 
 	public Team getTeam(Long teamId) {
-		return teamRepository.findOne(teamId);
+		try {
+			return teamRepository.findOne(teamId);
+		} catch (DataAccessException e) {
+			throw new ServiceException("Could not get team with id: " + teamId);
+		}
 	}
 
 	public Slice<Team> searchTeamByName(String name) {
-		return teamRepository.findByNameContaining(name);
+		try {
+			return teamRepository.findByNameContaining(name);
+		} catch (DataAccessException e) {
+			throw new ServiceException("Could not get team with name: " + name);
+		}
 	}
 
 	public Slice<Team> getAllTeams(PageRequest pageRequest) {
-		return teamRepository.findAll(pageRequest);
+		try {
+			return teamRepository.findAll(pageRequest);
+		} catch (DataAccessException e) {
+			throw new ServiceException("Coulld not get teams");
+		}
 	}
 
 	@Transactional
 	public void addUserToTeam(Long userId, Long teamId) {
-		if (teamHasSpaceForUser(teamId)) {
-			try {
+		try {
+			if (teamHasSpaceForUser(teamId)) {
 				Team team = teamRepository.findOne(teamId);
 				User user = userRepository.findOne(userId);
 				team.addUser(user);
 				teamRepository.save(team);
-				//Has several possible exceptions probably
-			} catch (Exception e) {
-				throw new ServiceException("User could not be added to Team");
+				// Has several possible exceptions probably
+			} else {
+				throw new ServiceException("No space in team for user. userId = " + userId + "teamId = " + teamId);
 			}
-		} else {
-			throw new ServiceException("No space in team for user. userId = " + userId + "teamId = " + teamId);
+		} catch (Exception e) {
+			throw new ServiceException("User could not be added to Team");
 		}
 	}
 
@@ -317,15 +329,14 @@ public class CaseService {
 		// throw a ServiceException as desired
 		if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId, userId, new PageRequest(0, 5))) {
 			try {
-				workItemRepository.addWorkItemToUser(workItemId, userId);				
+				workItemRepository.addWorkItemToUser(workItemId, userId);
 			} catch (DataAccessException e) {
 				throw new ServiceException("Could not add WorkItem to User");
 			}
-		}
-		else
+		} else
 			throw new ServiceException("User is either inactive or has no space for additional WorkItems");
 	}
-	
+
 	public Slice<WorkItem> searchWorkItemByDescription(String description, Pageable pageable) {
 		return workItemRepository.findByDescriptionContaining(description, pageable);
 	}
@@ -373,7 +384,7 @@ public class CaseService {
 				workItem.setIssue(issue).setStatus(Status.UNSTARTED);
 				workItemRepository.save(workItem);
 				return issue;
-			} catch (Exception e) {
+			} catch (DataAccessException e) {
 				throw new ServiceException("Issue could not be saved");
 			}
 		} else {
@@ -388,7 +399,7 @@ public class CaseService {
 				Issue issue = issueRepository.findOne(issueId);
 				issue.setDescription(description);
 				return issueRepository.save(issue);
-			} catch (Exception e) {
+			} catch (DataAccessException e) {
 				throw new ServiceException("Issue could not be updated");
 			}
 		} else {
@@ -397,11 +408,19 @@ public class CaseService {
 	}
 
 	public Issue getIssue(Long id) {
-		return issueRepository.findOne(id);
+		try {
+			return issueRepository.findOne(id);
+		} catch (DataAccessException e) {
+			throw new ServiceException("Could not get Issue with id: " + id);
+		}
 	}
 
 	public Slice<Issue> getAllIssues(PageRequest pageRequest) {
-		return issueRepository.findAll(pageRequest);
+		try {
+			return issueRepository.findAll(pageRequest);
+		} catch (DataAccessException e) {
+			throw new ServiceException("Could not get issues");
+		}
 	}
 
 	private boolean userFillsRequirements(User user) {
@@ -420,7 +439,7 @@ public class CaseService {
 	}
 
 	private boolean teamHasSpaceForUser(Long teamId) {
-		
+
 		return userRepository.countByTeamId(teamId) < 10;
 	}
 
