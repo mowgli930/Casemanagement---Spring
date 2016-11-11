@@ -309,7 +309,7 @@ public class CaseService {
 		try {
 			return workItemRepository.save(workItem);
 		} catch (DataAccessException e) {
-			throw new ServiceException("WorkItem could not be saved");
+			throw new ServiceException("WorkItem could not be saved", e);
 		}
 	}
 
@@ -318,7 +318,7 @@ public class CaseService {
 			try {
 				workItemRepository.updateStatusById(workItemId, workItemStatus);
 			} catch (DataAccessException e) {
-				throw new ServiceException("This WorkItem could not be updated");
+				throw new ServiceException("This WorkItem could not be updated", e);
 			}
 		else
 			throw new ServiceException("This WorkItem does not exist");
@@ -330,7 +330,7 @@ public class CaseService {
 				workItemRepository.delete(workItemId);
 				cleanRelatedDataOnWorkItemDelete(workItemId);
 			} catch (DataAccessException e) {
-				throw new ServiceException("WorkItem could not be deleted");
+				throw new ServiceException("WorkItem could not be deleted", e);
 			}
 		} else
 			throw new ServiceException("This WorkItem does not exist");
@@ -343,7 +343,7 @@ public class CaseService {
 			try {
 				workItemRepository.addWorkItemToUser(workItemId, userId);
 			} catch (DataAccessException e) {
-				throw new ServiceException("Could not add WorkItem to User");
+				throw new ServiceException("Could not add WorkItem to User", e);
 			}
 		} else
 			throw new ServiceException("User is either inactive or has no space for additional WorkItems");
@@ -353,7 +353,7 @@ public class CaseService {
 		try {
 			return workItemRepository.findByDescriptionContaining(description, pageable);
 		} catch (DataAccessException e) {
-			throw new ServiceException("Could not find any WorkItem with description: " + description);
+			throw new ServiceException("Could not find any WorkItem with description: " + description, e);
 		}
 	}
 
