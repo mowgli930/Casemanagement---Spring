@@ -51,7 +51,7 @@ public class CaseService {
 
 		try {
 			return userRepository.save(user);
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			throw new ServiceException("User couldnt be saved : " + user.getUsername());
 		}
 	}
@@ -66,7 +66,7 @@ public class CaseService {
 
 				return userRepository.save(user);
 
-			} catch (Exception e) {
+			} catch (DataAccessException e) {
 				throw new ServiceException("User couldnt be updated");
 			}
 		} else {
@@ -85,7 +85,7 @@ public class CaseService {
 
 				return userRepository.save(user);
 
-			} catch (Exception e) {
+			} catch (DataAccessException e) {
 				throw new ServiceException("User couldnt be updated");
 			}
 		} else {
@@ -109,7 +109,7 @@ public class CaseService {
 
 				return userRepository.save(user);
 
-			} catch (/* MoreSpecific */Exception e) {
+			} catch (DataAccessException e) {
 				throw new ServiceException("User couldnt be updated");
 			}
 		} else
@@ -131,7 +131,7 @@ public class CaseService {
 
 				return userRepository.save(user);
 
-			} catch (Exception e) {
+			} catch (DataAccessException e) {
 				throw new ServiceException("User couldnt be updated");
 			}
 		} else {
@@ -151,7 +151,7 @@ public class CaseService {
 				user.setActive(true);
 
 				return userRepository.save(user);
-			} catch (Exception e) {
+			} catch (DataAccessException e) {
 				throw new ServiceException("User could not be updated");
 			}
 		} else {
@@ -284,7 +284,7 @@ public class CaseService {
 			} else {
 				throw new ServiceException("No space in team for user. userId = " + userId + "teamId = " + teamId);
 			}
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			throw new ServiceException("User could not be added to Team");
 		}
 	}
