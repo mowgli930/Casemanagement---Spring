@@ -350,7 +350,11 @@ public class CaseService {
 	}
 
 	public Slice<WorkItem> searchWorkItemByDescription(String description, Pageable pageable) {
-		return workItemRepository.findByDescriptionContaining(description, pageable);
+		try {
+			return workItemRepository.findByDescriptionContaining(description, pageable);
+		} catch (DataAccessException e) {
+			throw new ServiceException("Could not find any WorkItem with description: " + description);
+		}
 	}
 
 	public Slice<WorkItem> getWorkItemsByStatus(WorkItem.Status workItemStatus, Pageable pageable) {
