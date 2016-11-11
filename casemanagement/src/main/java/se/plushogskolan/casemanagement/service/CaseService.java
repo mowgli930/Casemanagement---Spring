@@ -52,7 +52,7 @@ public class CaseService {
 		try {
 			return userRepository.save(user);
 		} catch (DataAccessException e) {
-			throw new ServiceException("User couldnt be saved : " + user.getUsername());
+			throw new ServiceException("User couldnt be saved : " + user.getUsername(), e);
 		}
 	}
 
@@ -67,7 +67,7 @@ public class CaseService {
 				return userRepository.save(user);
 
 			} catch (DataAccessException e) {
-				throw new ServiceException("User couldnt be updated");
+				throw new ServiceException("User couldnt be updated", e);
 			}
 		} else {
 			throw new ServiceException("User doesnt exist :" + userId);
@@ -86,7 +86,7 @@ public class CaseService {
 				return userRepository.save(user);
 
 			} catch (DataAccessException e) {
-				throw new ServiceException("User couldnt be updated");
+				throw new ServiceException("User couldnt be updated", e);
 			}
 		} else {
 			throw new ServiceException("User doesnt exist :" + userId);
@@ -110,7 +110,7 @@ public class CaseService {
 				return userRepository.save(user);
 
 			} catch (DataAccessException e) {
-				throw new ServiceException("User couldnt be updated");
+				throw new ServiceException("User couldnt be updated", e);
 			}
 		} else
 			throw new ServiceException("User could not be updated");
@@ -132,7 +132,7 @@ public class CaseService {
 				return userRepository.save(user);
 
 			} catch (DataAccessException e) {
-				throw new ServiceException("User couldnt be updated");
+				throw new ServiceException("User couldnt be updated", e);
 			}
 		} else {
 			throw new ServiceException("User doesnt exists :" + userId);
@@ -152,7 +152,7 @@ public class CaseService {
 
 				return userRepository.save(user);
 			} catch (DataAccessException e) {
-				throw new ServiceException("User could not be updated");
+				throw new ServiceException("User could not be updated", e);
 			}
 		} else {
 			throw new ServiceException("User doesnt exists :" + userId);
@@ -169,22 +169,22 @@ public class CaseService {
 
 	}
 
-	public Slice<User> searchUsersByFirstName(String firstName, PageRequest page) {
+	public Slice<User> searchUsersByFirstName(String firstName, Pageable page) {
 
 		return userRepository.findByFirstNameContaining(firstName, page);
 	}
 
-	public Slice<User> searchUsersByLastName(String lastName, PageRequest page) {
+	public Slice<User> searchUsersByLastName(String lastName, Pageable page) {
 
 		return userRepository.findByLastNameContaining(lastName, page);
 	}
 
-	public Slice<User> searchUsersByUsername(String username, PageRequest page) {
+	public Slice<User> searchUsersByUsername(String username, Pageable page) {
 
 		return userRepository.findByUsernameContaining(username, page);
 	}
 
-	public Slice<User> getUsersByTeam(Long teamId, PageRequest page) {
+	public Slice<User> getUsersByTeam(Long teamId, Pageable page) {
 
 		return userRepository.findByTeamId(teamId, page);
 	}
