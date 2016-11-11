@@ -170,23 +170,35 @@ public class CaseService {
 	}
 
 	public Slice<User> searchUsersByFirstName(String firstName, Pageable page) {
-
-		return userRepository.findByFirstNameContaining(firstName, page);
+		try {
+			return userRepository.findByFirstNameContaining(firstName, page);
+		} catch (DataAccessException e) {
+			throw new ServiceException("Couldnt search users", e);
+		}
 	}
 
 	public Slice<User> searchUsersByLastName(String lastName, Pageable page) {
-
-		return userRepository.findByLastNameContaining(lastName, page);
+		try {
+			return userRepository.findByLastNameContaining(lastName, page);
+		} catch (DataAccessException e) {
+			throw new ServiceException("Couldnt search users", e);
+		}
 	}
 
 	public Slice<User> searchUsersByUsername(String username, Pageable page) {
-
-		return userRepository.findByUsernameContaining(username, page);
+		try {
+			return userRepository.findByUsernameContaining(username, page);
+		} catch (DataAccessException e) {
+			throw new ServiceException("Couldnt search users", e);
+		}
 	}
 
 	public Slice<User> getUsersByTeam(Long teamId, Pageable page) {
-
-		return userRepository.findByTeamId(teamId, page);
+		try {
+			return userRepository.findByTeamId(teamId, page);
+		} catch (DataAccessException e) {
+			throw new ServiceException("Couldnt search users", e);
+		}
 	}
 
 	// // TEAM
