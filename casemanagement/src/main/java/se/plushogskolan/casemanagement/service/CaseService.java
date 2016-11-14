@@ -338,7 +338,7 @@ public class CaseService {
 			throw new ServiceException("This WorkItem does not exist");
 	}
 
-	public void addWorkItemToUser(Long workItemId, Long userId) {
+	public WorkItem addWorkItemToUser(Long workItemId, Long userId) {
 		// PageRequest(0, 5) because if page 0 has 5 entries the method will
 		// throw a ServiceException as desired
 		if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId, userId, new PageRequest(0, 5))) {
@@ -346,7 +346,7 @@ public class CaseService {
 				WorkItem workItem = workItemRepository.findOne(workItemId);
 				User user = userRepository.findOne(userId);
 				workItem.setUser(user);
-				workItemRepository.save(workItem);
+				return workItemRepository.save(workItem);
 			} catch (DataAccessException e) {
 				throw new ServiceException("Could not add WorkItem to User", e);
 			}
