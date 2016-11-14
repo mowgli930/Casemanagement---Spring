@@ -2,7 +2,6 @@ package se.plushogskolan.casemanagement.repository;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -10,10 +9,6 @@ import org.springframework.data.repository.query.Param;
 import se.plushogskolan.casemanagement.model.WorkItem;
 
 public interface WorkItemRepository extends PagingAndSortingRepository<WorkItem, Long>{
-	
-	@Modifying
-	@Query("UPDATE #{#entityName} wi SET wi.user.id = :userId WHERE wi.id = :workItemId")
-	void addWorkItemToUser(@Param("workItemId") Long workItemId, @Param("userId") Long userId);
 	
 	Slice<WorkItem> findByDescriptionContaining(String description, Pageable pageable);
 	

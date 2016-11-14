@@ -343,7 +343,10 @@ public class CaseService {
 		// throw a ServiceException as desired
 		if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId, userId, new PageRequest(0, 5))) {
 			try {
-				workItemRepository.addWorkItemToUser(workItemId, userId);
+				WorkItem workItem = workItemRepository.findOne(workItemId);
+				User user = userRepository.findOne(userId);
+				workItem.setUser(user);
+				workItemRepository.save(workItem);
 			} catch (DataAccessException e) {
 				throw new ServiceException("Could not add WorkItem to User", e);
 			}
