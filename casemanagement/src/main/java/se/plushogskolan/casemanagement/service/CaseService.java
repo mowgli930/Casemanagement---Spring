@@ -314,10 +314,10 @@ public class CaseService {
 	}
 
 	public WorkItem updateStatusById(Long workItemId, WorkItem.Status workItemStatus) {
-		WorkItem workItem = workItemRepository.findOne(workItemId);
-		if(workItem != null) {
-			workItem.setStatus(workItemStatus);
+		if(workItemRepository.exists(workItemId)) {
 			try {
+				WorkItem workItem = workItemRepository.findOne(workItemId);
+				workItem.setStatus(workItemStatus);
 				return workItemRepository.save(workItem);
 			} catch (DataAccessException e) {
 				throw new ServiceException("This WorkItem could not be updated", e);
