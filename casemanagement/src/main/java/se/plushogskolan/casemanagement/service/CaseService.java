@@ -51,8 +51,8 @@ public class CaseService {
 
 		try {
 			return userRepository.save(user);
-		} catch (Exception e) {
-			throw new ServiceException("User couldnt be saved : " + user.getUsername());
+		} catch (DataAccessException e) {
+			throw new ServiceException("User couldnt be saved : " + user.getUsername(), e);
 		}
 	}
 
@@ -66,8 +66,8 @@ public class CaseService {
 
 				return userRepository.save(user);
 
-			} catch (Exception e) {
-				throw new ServiceException("User couldnt be updated");
+			} catch (DataAccessException e) {
+				throw new ServiceException("User couldnt be updated", e);
 			}
 		} else {
 			throw new ServiceException("User doesnt exist :" + userId);
@@ -85,8 +85,8 @@ public class CaseService {
 
 				return userRepository.save(user);
 
-			} catch (Exception e) {
-				throw new ServiceException("User couldnt be updated");
+			} catch (DataAccessException e) {
+				throw new ServiceException("User couldnt be updated", e);
 			}
 		} else {
 			throw new ServiceException("User doesnt exist :" + userId);
@@ -109,8 +109,8 @@ public class CaseService {
 
 				return userRepository.save(user);
 
-			} catch (/* MoreSpecific */Exception e) {
-				throw new ServiceException("User couldnt be updated");
+			} catch (DataAccessException e) {
+				throw new ServiceException("User couldnt be updated", e);
 			}
 		} else
 			throw new ServiceException("User could not be updated");
@@ -131,8 +131,8 @@ public class CaseService {
 
 				return userRepository.save(user);
 
-			} catch (Exception e) {
-				throw new ServiceException("User couldnt be updated");
+			} catch (DataAccessException e) {
+				throw new ServiceException("User couldnt be updated", e);
 			}
 		} else {
 			throw new ServiceException("User doesnt exists :" + userId);
@@ -151,8 +151,8 @@ public class CaseService {
 				user.setActive(true);
 
 				return userRepository.save(user);
-			} catch (Exception e) {
-				throw new ServiceException("User could not be updated");
+			} catch (DataAccessException e) {
+				throw new ServiceException("User could not be updated", e);
 			}
 		} else {
 			throw new ServiceException("User doesnt exists :" + userId);
@@ -169,24 +169,36 @@ public class CaseService {
 
 	}
 
-	public Slice<User> searchUsersByFirstName(String firstName, PageRequest page) {
-
-		return userRepository.findByFirstNameContaining(firstName, page);
+	public Slice<User> searchUsersByFirstName(String firstName, Pageable page) {
+		try {
+			return userRepository.findByFirstNameContaining(firstName, page);
+		} catch (DataAccessException e) {
+			throw new ServiceException("Couldnt search users", e);
+		}
 	}
 
-	public Slice<User> searchUsersByLastName(String lastName, PageRequest page) {
-
-		return userRepository.findByLastNameContaining(lastName, page);
+	public Slice<User> searchUsersByLastName(String lastName, Pageable page) {
+		try {
+			return userRepository.findByLastNameContaining(lastName, page);
+		} catch (DataAccessException e) {
+			throw new ServiceException("Couldnt search users", e);
+		}
 	}
 
-	public Slice<User> searchUsersByUsername(String username, PageRequest page) {
-
-		return userRepository.findByUsernameContaining(username, page);
+	public Slice<User> searchUsersByUsername(String username, Pageable page) {
+		try {
+			return userRepository.findByUsernameContaining(username, page);
+		} catch (DataAccessException e) {
+			throw new ServiceException("Couldnt search users", e);
+		}
 	}
 
-	public Slice<User> getUsersByTeam(Long teamId, PageRequest page) {
-
-		return userRepository.findByTeamId(teamId, page);
+	public Slice<User> getUsersByTeam(Long teamId, Pageable page) {
+		try {
+			return userRepository.findByTeamId(teamId, page);
+		} catch (DataAccessException e) {
+			throw new ServiceException("Couldnt search users", e);
+		}
 	}
 
 	// // TEAM
@@ -284,7 +296,7 @@ public class CaseService {
 			} else {
 				throw new ServiceException("No space in team for user. userId = " + userId + "teamId = " + teamId);
 			}
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			throw new ServiceException("User could not be added to Team");
 		}
 	}
@@ -297,7 +309,7 @@ public class CaseService {
 		try {
 			return workItemRepository.save(workItem);
 		} catch (DataAccessException e) {
-			throw new ServiceException("WorkItem could not be saved");
+			throw new ServiceException("WorkItem could not be saved", e);
 		}
 	}
 
@@ -321,7 +333,7 @@ public class CaseService {
 				workItemRepository.delete(workItemId);
 				cleanRelatedDataOnWorkItemDelete(workItemId);
 			} catch (DataAccessException e) {
-				throw new ServiceException("WorkItem could not be deleted");
+				throw new ServiceException("WorkItem could not be deleted", e);
 			}
 		} else
 			throw new ServiceException("This WorkItem does not exist");
@@ -334,14 +346,18 @@ public class CaseService {
 			try {
 				workItemRepository.addWorkItemToUser(workItemId, userId);
 			} catch (DataAccessException e) {
-				throw new ServiceException("Could not add WorkItem to User");
+				throw new ServiceException("Could not add WorkItem to User", e);
 			}
 		} else
 			throw new ServiceException("User is either inactive or has no space for additional WorkItems");
 	}
 
 	public Slice<WorkItem> searchWorkItemByDescription(String description, Pageable pageable) {
-		return workItemRepository.findByDescriptionContaining(description, pageable);
+		try {
+			return workItemRepository.findByDescriptionContaining(description, pageable);
+		} catch (DataAccessException e) {
+			throw new ServiceException("Could not find any WorkItem with description: " + description, e);
+		}
 	}
 
 	public Slice<WorkItem> getWorkItemsByStatus(WorkItem.Status workItemStatus, Pageable pageable) {
