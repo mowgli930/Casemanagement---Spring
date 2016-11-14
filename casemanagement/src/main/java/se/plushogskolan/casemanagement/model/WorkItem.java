@@ -1,5 +1,6 @@
 package se.plushogskolan.casemanagement.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -15,7 +16,7 @@ public final class WorkItem extends AbstractEntity {
 	@ManyToOne
 	private User user;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private Issue issue;
 
 	private Status status;
