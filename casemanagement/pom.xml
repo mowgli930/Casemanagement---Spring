@@ -45,10 +45,10 @@
 		</dependency>
 
 		<!-- Spring aspects -->
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aspects</artifactId>
-			<version>4.3.3.RELEASE</version>
 		</dependency>
 
 		<!-- Transaction handler -->
