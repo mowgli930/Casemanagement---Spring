@@ -364,7 +364,7 @@ public class CaseService {
 
 	public Slice<WorkItem> getWorkItemsByStatus(WorkItem.Status workItemStatus, Pageable pageable) {
 		try {
-			return workItemRepository.getWorkItemsByStatus(workItemStatus, pageable);
+			return workItemRepository.findByStatus(workItemStatus, pageable);
 		} catch (DataAccessException e) {
 			throw new ServiceException("Could not WorkItems with status " + workItemStatus, e);
 		}
@@ -372,7 +372,7 @@ public class CaseService {
 
 	public Slice<WorkItem> getWorkItemsByTeamId(Long teamId, Pageable pageable) {
 		try {
-			return workItemRepository.getWorkItemsByTeamId(teamId, pageable);
+			return workItemRepository.findByTeamId(teamId, pageable);
 		} catch (DataAccessException e) {
 			throw new ServiceException("Could not get WorkItem connected to Team id " + teamId, e);
 		}
