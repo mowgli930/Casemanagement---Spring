@@ -331,7 +331,6 @@ public class CaseService {
 		if (workItemRepository.exists(workItemId)) {
 			try {
 				workItemRepository.delete(workItemId);
-				cleanRelatedDataOnWorkItemDelete(workItemId);
 			} catch (DataAccessException e) {
 				throw new ServiceException("WorkItem could not be deleted", e);
 			}
@@ -499,11 +498,6 @@ public class CaseService {
 	private boolean workItemIsDone(Long workItemId) {
 		WorkItem workItem = workItemRepository.findOne(workItemId);
 		return WorkItem.Status.DONE.equals(workItem.getStatus());
-	}
-
-	private void cleanRelatedDataOnWorkItemDelete(Long workItemId) {
-		for (Issue issue : issueRepository.getIssuesByWorkItemId(workItemId))
-			issueRepository.delete(issue.getId());
 	}
 
 	private boolean isPersistedObject(AbstractEntity entity) {
