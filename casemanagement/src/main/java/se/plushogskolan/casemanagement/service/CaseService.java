@@ -313,12 +313,12 @@ public class CaseService {
 		}
 	}
 
-	public void updateStatusById(Long workItemId, WorkItem.Status workItemStatus) {
+	public WorkItem updateStatusById(Long workItemId, WorkItem.Status workItemStatus) {
 		WorkItem workItem = workItemRepository.findOne(workItemId);
 		if(workItem != null) {
 			workItem.setStatus(workItemStatus);
 			try {
-				workItemRepository.save(workItem);
+				return workItemRepository.save(workItem);
 			} catch (DataAccessException e) {
 				throw new ServiceException("This WorkItem could not be updated", e);
 			}
