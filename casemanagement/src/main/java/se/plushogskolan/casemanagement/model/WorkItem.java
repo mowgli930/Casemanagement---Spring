@@ -25,7 +25,7 @@ public final class WorkItem extends AbstractEntity {
 	@ManyToOne
 	private User user;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.REMOVE)
 	private Issue issue;
 
 	private Status status;
