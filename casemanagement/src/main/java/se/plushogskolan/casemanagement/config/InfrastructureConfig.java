@@ -8,6 +8,7 @@ import static se.plushogskolan.casemanagement.properties.PropertyReader.readProp
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -23,6 +24,7 @@ import se.plushogskolan.casemanagement.auditing.CustomAuditorAware;
 
 @Configuration
 @EnableJpaRepositories("se.plushogskolan.casemanagement.repository")
+@EnableJpaAuditing
 @EnableTransactionManagement
 public class InfrastructureConfig {
 
