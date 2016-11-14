@@ -11,9 +11,6 @@ import se.plushogskolan.casemanagement.model.WorkItem;
 
 public interface WorkItemRepository extends PagingAndSortingRepository<WorkItem, Long>{
 	
-	@Query("UPDATE #{#entityName} wi SET wi.status = :status WHERE wi.id = :workItemId")
-	WorkItem updateStatusById(@Param("workItemId") Long workItemId, @Param("status") WorkItem.Status workItemStatus);
-	
 	@Modifying
 	@Query("UPDATE #{#entityName} wi SET wi.user.id = :userId WHERE wi.id = :workItemId")
 	void addWorkItemToUser(@Param("workItemId") Long workItemId, @Param("userId") Long userId);

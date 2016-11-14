@@ -302,12 +302,15 @@ public class CaseService {
 	}
 
 	public void updateStatusById(Long workItemId, WorkItem.Status workItemStatus) {
-		if (workItemRepository.exists(workItemId))
+		WorkItem workItem = workItemRepository.findOne(workItemId);
+		if(workItem != null) {
+			workItem.setStatus(workItemStatus);
 			try {
-				workItemRepository.updateStatusById(workItemId, workItemStatus);
+				workItemRepository.save(workItem);
 			} catch (DataAccessException e) {
-				throw new ServiceException("This WorkItem could not be updated");
+				throw new ServiceException("This WorkItem could not be updated", e);
 			}
+		}
 		else
 			throw new ServiceException("This WorkItem does not exist");
 	}
@@ -447,7 +450,7 @@ public class CaseService {
 
 		Slice<WorkItem> workItems = workItemRepository.findByUserId(userId, new PageRequest(0, 5));
 		for (WorkItem workItem : workItems) {
-			workItemRepository.updateStatusById(workItem.getId(), WorkItem.Status.UNSTARTED);
+			updateStatusById(workItem.getId(), WorkItem.Status.UNSTARTED);
 		}
 	}
 
@@ -461,7 +464,6 @@ public class CaseService {
 	}
 
 	private boolean userHasSpaceForAdditionalWorkItem(Long workItemId, Long userId, Pageable pageable) {
-		// TODO How should the PageRequest look?
 		Slice<WorkItem> workItems = workItemRepository.findByUserId(userId, pageable);
 
 		if (workItems == null) {
