@@ -21,24 +21,15 @@ public class User extends AbstractEntity {
 
 	private boolean isActive = true;
 
-	private String firstName= "";
+	private String firstName = "";
 
 	private String lastName = "";
-	
-	public User(String username){
+
+	public User(String username) {
 		this.username = username;
 	}
 
 	protected User() {
-	}
-
-	public boolean isIdentical(Object other) {
-		if (!equals(other)) {
-			return false;
-		}
-		User otherUser = (User) other;
-		return firstName.equals(otherUser.firstName) && lastName.equals(otherUser.lastName) && team == otherUser.team
-				&& isActive == otherUser.isActive;
 	}
 
 	@Override
@@ -54,7 +45,8 @@ public class User extends AbstractEntity {
 
 		if (other instanceof User) {
 			User otherUser = (User) other;
-			return id == otherUser.getId() && username.equals(otherUser.getUsername());
+			return firstName.equals(otherUser.getFirstName()) && lastName.equals(otherUser.getLastName())
+					&& username.equals(otherUser.getUsername()) && isActive == otherUser.isActive();
 		}
 		return false;
 	}
@@ -90,32 +82,32 @@ public class User extends AbstractEntity {
 	public String getLastName() {
 		return lastName;
 	}
-	
+
 	public User setFirstName(String firstName) {
 		this.firstName = firstName;
 		return this;
 	}
-	
+
 	public User setLastName(String lastName) {
 		this.lastName = lastName;
 		return this;
 	}
-	
+
 	public User setUsername(String username) {
 		this.username = username;
 		return this;
 	}
-	
+
 	public User setTeam(Team team) {
 		this.team = team;
 		return this;
 	}
-	
+
 	public User setActive(boolean isActive) {
 		this.isActive = isActive;
 		return this;
 	}
-	
+
 	public User setWorkItems(Collection<WorkItem> workItems) {
 		this.workItems = workItems;
 		return this;
