@@ -268,9 +268,9 @@ public class CaseService {
 		}
 	}
 
-	public Slice<Team> searchTeamByName(String name) {
+	public Slice<Team> searchTeamByName(String name, Pageable page) {
 		try {
-			return teamRepository.findByNameContaining(name);
+			return teamRepository.findByNameContaining(name, page);
 		} catch (DataAccessException e) {
 			throw new ServiceException("Could not get team with name: " + name);
 		}
