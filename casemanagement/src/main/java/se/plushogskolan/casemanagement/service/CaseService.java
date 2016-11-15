@@ -43,7 +43,7 @@ public class CaseService {
 	public User save(User user) {
 
 		if (!userFillsRequirements(user)) {
-			throw new ServiceException("Username is to short or team is full");
+			throw new ServiceException("Username is too short or team is full");
 		}
 		if (isPersistedObject(user)) {
 			throw new ServiceException(String.format("User with id: %d already exists", user.getId()));
@@ -52,7 +52,7 @@ public class CaseService {
 		try {
 			return userRepository.save(user);
 		} catch (DataAccessException e) {
-			throw new ServiceException("User couldnt be saved : " + user.getUsername(), e);
+			throw new ServiceException("User could not be saved : " + user.getUsername(), e);
 		}
 	}
 
@@ -67,10 +67,10 @@ public class CaseService {
 				return userRepository.save(user);
 
 			} catch (DataAccessException e) {
-				throw new ServiceException("User couldnt be updated", e);
+				throw new ServiceException("User could not be updated", e);
 			}
 		} else {
-			throw new ServiceException("User doesnt exist :" + userId);
+			throw new ServiceException("User does not exist :" + userId);
 		}
 	}
 
@@ -86,10 +86,10 @@ public class CaseService {
 				return userRepository.save(user);
 
 			} catch (DataAccessException e) {
-				throw new ServiceException("User couldnt be updated", e);
+				throw new ServiceException("User could not be updated", e);
 			}
 		} else {
-			throw new ServiceException("User doesnt exist :" + userId);
+			throw new ServiceException("User does not exist :" + userId);
 		}
 	}
 
@@ -97,7 +97,7 @@ public class CaseService {
 	public User updateUserUsername(Long userId, String username) {
 
 		if (!usernameLongEnough(username)) {
-			throw new ServiceException("Username not long enogh!");
+			throw new ServiceException("Username not long enough!");
 		}
 
 		if (userRepository.exists(userId)) {
@@ -110,7 +110,7 @@ public class CaseService {
 				return userRepository.save(user);
 
 			} catch (DataAccessException e) {
-				throw new ServiceException("User couldnt be updated", e);
+				throw new ServiceException("User could not be updated", e);
 			}
 		} else
 			throw new ServiceException("User could not be updated");
@@ -132,10 +132,10 @@ public class CaseService {
 				return userRepository.save(user);
 
 			} catch (DataAccessException e) {
-				throw new ServiceException("User couldnt be updated", e);
+				throw new ServiceException("User could not be updated", e);
 			}
 		} else {
-			throw new ServiceException("User doesnt exists :" + userId);
+			throw new ServiceException("User does not exists :" + userId);
 		}
 	}
 
@@ -155,7 +155,7 @@ public class CaseService {
 				throw new ServiceException("User could not be updated", e);
 			}
 		} else {
-			throw new ServiceException("User doesnt exists :" + userId);
+			throw new ServiceException("User does not exists :" + userId);
 		}
 	}
 
@@ -164,7 +164,7 @@ public class CaseService {
 		if (userRepository.exists(userId)) {
 			return userRepository.findOne(userId);
 		} else {
-			throw new ServiceException("User doesnt exists :" + userId);
+			throw new ServiceException("User does not exists :" + userId);
 		}
 
 	}
@@ -173,7 +173,7 @@ public class CaseService {
 		try {
 			return userRepository.findByFirstNameContaining(firstName, page);
 		} catch (DataAccessException e) {
-			throw new ServiceException("Couldnt search users", e);
+			throw new ServiceException("Could not search users", e);
 		}
 	}
 
@@ -181,7 +181,7 @@ public class CaseService {
 		try {
 			return userRepository.findByLastNameContaining(lastName, page);
 		} catch (DataAccessException e) {
-			throw new ServiceException("Couldnt search users", e);
+			throw new ServiceException("Could not search users", e);
 		}
 	}
 
@@ -189,7 +189,7 @@ public class CaseService {
 		try {
 			return userRepository.findByUsernameContaining(username, page);
 		} catch (DataAccessException e) {
-			throw new ServiceException("Couldnt search users", e);
+			throw new ServiceException("Could not search users", e);
 		}
 	}
 
@@ -197,7 +197,7 @@ public class CaseService {
 		try {
 			return userRepository.findByTeamId(teamId, page);
 		} catch (DataAccessException e) {
-			throw new ServiceException("Couldnt search users", e);
+			throw new ServiceException("Could not search users", e);
 		}
 	}
 
@@ -211,7 +211,7 @@ public class CaseService {
 				throw new ServiceException("Team could not be saved");
 			}
 		} else {
-			throw new ServiceException("Team already exsist");
+			throw new ServiceException("Team already exists");
 		}
 	}
 
@@ -226,7 +226,7 @@ public class CaseService {
 				throw new ServiceException("Could not update Team");
 			}
 		} else {
-			throw new ServiceException("Team does not exsist");
+			throw new ServiceException("Team does not exist");
 		}
 	}
 
@@ -253,7 +253,7 @@ public class CaseService {
 				team.setActive(true);
 				return teamRepository.save(team);
 			} else {
-				throw new ServiceException("Could not activate Team with id: " + teamId);
+				throw new ServiceException("Team could not be activated");
 			}
 		} catch (DataAccessException e) {
 			throw new ServiceException("Team could not be activated");
@@ -280,7 +280,7 @@ public class CaseService {
 		try {
 			return teamRepository.findAll(pageRequest);
 		} catch (DataAccessException e) {
-			throw new ServiceException("Coulld not get teams");
+			throw new ServiceException("Could not get teams");
 		}
 	}
 
@@ -366,7 +366,7 @@ public class CaseService {
 		try {
 			return workItemRepository.findByStatus(workItemStatus, pageable);
 		} catch (DataAccessException e) {
-			throw new ServiceException("Could not WorkItems with status " + workItemStatus, e);
+			throw new ServiceException("Could not get WorkItems with status " + workItemStatus, e);
 		}
 	}
 
@@ -382,7 +382,7 @@ public class CaseService {
 		try {
 			return workItemRepository.findByUserId(userId, pageable);
 		} catch (DataAccessException e) {
-			throw new ServiceException("Could not WorkItem connected to User id " + userId, e);
+			throw new ServiceException("Could not get WorkItem connected to User id " + userId, e);
 		}
 	}
 
@@ -390,7 +390,7 @@ public class CaseService {
 		try {
 			return workItemRepository.getWorkItemsWithIssue(pageable);
 		} catch (DataAccessException e) {
-			throw new ServiceException("Could not WorkItems with Issues", e);
+			throw new ServiceException("Could not get WorkItems with Issues", e);
 		}
 	}
 
