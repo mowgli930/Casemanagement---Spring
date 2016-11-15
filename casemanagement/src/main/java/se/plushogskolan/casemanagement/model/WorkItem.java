@@ -6,8 +6,6 @@ import javax.persistence.EntityListeners;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
@@ -36,11 +34,6 @@ public final class WorkItem extends AuditedAbstractEntity {
 		this.issue = null;
 		this.description = description;
 		this.status = status;
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(ToStringStyle.SIMPLE_STYLE);
 	}
 
 	@Override

@@ -5,9 +5,6 @@ import java.util.Collection;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 @Entity
 public final class Team extends AbstractEntity {
 
@@ -50,11 +47,6 @@ public final class Team extends AbstractEntity {
 			return id == otherTeam.getId() && name.equals(otherTeam.getName());
 		}
 		return false;
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
 	}
 
 	public boolean isActive() {

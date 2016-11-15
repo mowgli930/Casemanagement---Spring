@@ -3,9 +3,6 @@ package se.plushogskolan.casemanagement.model;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 @Entity
 public final class Issue extends AbstractEntity {
 
@@ -20,11 +17,6 @@ public final class Issue extends AbstractEntity {
 	public Issue(WorkItem workItem, String description) {
 		this.workItem = workItem;
 		this.description = description;
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
 	}
 
 	@Override

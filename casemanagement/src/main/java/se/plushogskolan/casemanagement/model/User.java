@@ -7,9 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 @Entity
 public class User extends AbstractEntity {
 
@@ -68,11 +65,6 @@ public class User extends AbstractEntity {
 		int result = 1;
 		result = prime * result + ((username == null) ? 0 : username.hashCode());
 		return result;
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(ToStringStyle.JSON_STYLE);
 	}
 
 	public boolean isActive() {
