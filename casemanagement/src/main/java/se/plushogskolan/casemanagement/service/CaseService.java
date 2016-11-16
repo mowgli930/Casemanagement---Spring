@@ -56,7 +56,8 @@ public class CaseService {
 		}
 	}
 
-	@Transactional
+//	@Transactional TODO this method does not need to be transactional and
+//	other methods like it should not use transactional annotation
 	public User updateUserFirstName(Long userId, String firstName) {
 		if (userRepository.exists(userId)) {
 			try {
@@ -372,7 +373,7 @@ public class CaseService {
 
 	public Slice<WorkItem> getWorkItemsByTeamId(Long teamId, Pageable pageable) {
 		try {
-			return workItemRepository.findByTeamId(teamId, pageable);
+			return workItemRepository.findByUserTeamId(teamId, pageable);
 		} catch (DataAccessException e) {
 			throw new ServiceException("Could not get WorkItem connected to Team id " + teamId, e);
 		}

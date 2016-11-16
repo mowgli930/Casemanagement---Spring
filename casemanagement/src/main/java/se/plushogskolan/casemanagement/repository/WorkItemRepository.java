@@ -13,7 +13,7 @@ public interface WorkItemRepository extends PagingAndSortingRepository<WorkItem,
 	
 	Slice<WorkItem> findByStatus(WorkItem.Status workItemStatus, Pageable pageable);
 
-	Slice<WorkItem> findByTeamId(Long teamId, Pageable pageable);
+	Slice<WorkItem> findByUserTeamId(Long teamId, Pageable pageable);
 	
 	Slice<WorkItem> findByUserId(Long userId, Pageable pageable);
 	
