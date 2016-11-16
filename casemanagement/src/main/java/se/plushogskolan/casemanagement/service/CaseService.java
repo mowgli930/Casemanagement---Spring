@@ -56,8 +56,6 @@ public class CaseService {
 		}
 	}
 
-//	@Transactional TODO this method does not need to be transactional and
-//	other methods like it should not use transactional annotation
 	public User updateUserFirstName(Long userId, String firstName) {
 		if (userRepository.exists(userId)) {
 			try {
@@ -75,7 +73,6 @@ public class CaseService {
 		}
 	}
 
-	@Transactional
 	public User updateUserLastName(Long userId, String lastName) {
 
 		if (userRepository.exists(userId)) {
@@ -94,7 +91,6 @@ public class CaseService {
 		}
 	}
 
-	@Transactional
 	public User updateUserUsername(Long userId, String username) {
 
 		if (!usernameLongEnough(username)) {
@@ -117,7 +113,6 @@ public class CaseService {
 			throw new ServiceException("User could not be updated");
 	}
 
-	@Transactional
 	public User inactivateUser(Long userId) {
 
 		if (userRepository.exists(userId)) {
@@ -140,7 +135,6 @@ public class CaseService {
 		}
 	}
 
-	@Transactional
 	public User activateUser(Long userId) {
 
 		if (userRepository.exists(userId)) {
@@ -216,7 +210,7 @@ public class CaseService {
 		}
 	}
 
-	@Transactional
+//	@Transactional TODO should be tested
 	public Team updateTeam(Long teamId, Team newValues) {
 		if (teamRepository.exists(teamId)) {
 			try {
@@ -231,7 +225,7 @@ public class CaseService {
 		}
 	}
 
-	@Transactional
+//	@Transactional TODO should be tested
 	public Team inactivateTeam(Long teamId) {
 		Team team = teamRepository.findOne(teamId);
 		if (team.isActive() == true) {
