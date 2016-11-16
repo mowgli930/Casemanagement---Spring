@@ -26,7 +26,7 @@ public final class Issue extends AbstractEntity {
 		}
 		if (obj instanceof Issue) {
 			Issue otherIssue = (Issue) obj;
-			return id == otherIssue.id && description.equals(otherIssue.description);
+			return description.equals(otherIssue.description);
 		}
 		return false;
 	}
