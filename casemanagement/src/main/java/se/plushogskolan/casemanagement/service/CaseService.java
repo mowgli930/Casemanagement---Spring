@@ -4,6 +4,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -195,6 +196,14 @@ public class CaseService {
 			throw new ServiceException("Could not search users", e);
 		}
 	}
+	
+	public Page<User> getAllUsers(Pageable pageable) {
+		try {
+			return userRepository.findAll(pageable);
+		} catch (DataAccessException e) {
+			throw new ServiceException("Could not get all users", e);
+		}
+	}
 
 	// // TEAM
 
@@ -384,7 +393,15 @@ public class CaseService {
 			throw new ServiceException("Could not get WorkItems with Issues", e);
 		}
 	}
-
+	
+	public Page<WorkItem> getAllWorkItems(Pageable pageable) {
+		try {
+			return workItemRepository.findAll(pageable);
+		} catch (DataAccessException e) {
+			throw new ServiceException("Could not get all WorkItems", e);
+		}
+	}
+	
 	// ISSUE
 
 	@Transactional

@@ -1,5 +1,6 @@
 package se.plushogskolan.casemanagement.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.Query;
@@ -19,5 +20,7 @@ public interface WorkItemRepository extends PagingAndSortingRepository<WorkItem,
 	
 	@Query("SELECT wi FROM #{#entityName} wi WHERE wi.issue IS NOT NULL")
 	Slice<WorkItem> getWorkItemsWithIssue(Pageable pageable);
+	
+	Page<WorkItem> findAll(Pageable pageable);
 
 }
