@@ -1,5 +1,8 @@
 package se.plushogskolan.casemanagement.service;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -402,6 +405,13 @@ public class CaseService {
 		}
 	}
 	
+	public List<WorkItem> getAllDoneWorkItemsBetween(LocalDate fromDate, LocalDate toDate) {
+		try {
+			return workItemRepository.findAllBetween(fromDate, toDate, WorkItem.Status.DONE);
+		} catch (DataAccessException e) {
+			throw new ServiceException("Could not get all WorkItems between from " + fromDate.toString() + " to " + toDate.toString(), e);
+		}
+	}
 	// ISSUE
 
 	@Transactional
