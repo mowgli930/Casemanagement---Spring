@@ -1,6 +1,6 @@
 package se.plushogskolan.casemanagement.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import javax.persistence.MappedSuperclass;
 
@@ -19,10 +19,10 @@ public abstract class AuditedAbstractEntity extends AbstractEntity {
 	private String lastModifiedBy;
 
 	@CreatedDate
-	private Date createdDate;
+	private LocalDate createdDate;
 
 	@LastModifiedDate
-	private Date lastModifiedDate;
+	private LocalDate lastModifiedDate;
 
 	public String getCreatedBy() {
 		return createdBy;
@@ -40,19 +40,19 @@ public abstract class AuditedAbstractEntity extends AbstractEntity {
 		this.lastModifiedBy = lastModifiedBy;
 	}
 
-	public Date getCreatedDate() {
+	public LocalDate getCreatedDate() {
 		return createdDate;
 	}
 
-	public void setCreatedDate(Date createdDate) {
+	public void setCreatedDate(LocalDate createdDate) {
 		this.createdDate = createdDate;
 	}
 
-	public Date getLastModifiedDate() {
+	public LocalDate getLastModifiedDate() {
 		return lastModifiedDate;
 	}
 
-	public void setLastModifiedDate(Date lastModifiedDate) {
+	public void setLastModifiedDate(LocalDate lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
 	}
 }
