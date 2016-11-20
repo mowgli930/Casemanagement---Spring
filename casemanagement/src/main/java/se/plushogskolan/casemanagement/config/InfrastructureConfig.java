@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -27,19 +29,14 @@ import se.plushogskolan.casemanagement.auditing.CustomAuditorAware;
 @EnableJpaAuditing
 @EnableTransactionManagement
 public class InfrastructureConfig {
-
+	
 	@Bean
 	public DataSource dataSource() {
-
-		HikariConfig config = new HikariConfig();
-		config.setDriverClassName("com.mysql.jdbc.Driver");
-		config.setJdbcUrl("jdbc:mysql://localhost:3306/springdb");
-		config.setUsername(readProperty("username"));
-		config.setPassword(readProperty("password"));
-
-		return new HikariDataSource(config);
+		return new EmbeddedDatabaseBuilder()
+				.setType(EmbeddedDatabaseType.HSQL)
+				.build();
 	}
-
+	
 	@Bean
 	public JpaTransactionManager transactionManager(EntityManagerFactory factory) {
 		return new JpaTransactionManager(factory);

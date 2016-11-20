@@ -1,5 +1,6 @@
 package se.plushogskolan.casemanagement.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.persistence.Entity;
@@ -21,6 +22,7 @@ public final class Team extends AbstractEntity {
 	public Team(String name) {
 		this.active = true;
 		this.name = name;
+		this.users = new ArrayList<User>();
 	}
 
 	@Override
@@ -70,8 +72,5 @@ public final class Team extends AbstractEntity {
 	public Collection<User> getUsers() {
 		return users;
 	}
-	
-	public void addUser(User user){
-		users.add(user);
-	}
+
 }

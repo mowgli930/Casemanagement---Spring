@@ -43,7 +43,7 @@ public final class WorkItem extends AuditedAbstractEntity {
 		}
 		if (obj instanceof WorkItem) {
 			WorkItem otherWorkItem = (WorkItem) obj;
-			return user == otherWorkItem.user && description.equals(otherWorkItem.description)
+			return description.equals(otherWorkItem.description)
 					&& status.equals(otherWorkItem.status);
 		}
 		return false;
@@ -52,7 +52,6 @@ public final class WorkItem extends AuditedAbstractEntity {
 	@Override
 	public int hashCode() {
 		int result = 17;
-		result += 31 * user.hashCode();
 		result += 31 * description.hashCode();
 		return result;
 	}

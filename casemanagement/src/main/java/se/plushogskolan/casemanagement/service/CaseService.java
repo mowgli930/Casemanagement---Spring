@@ -154,7 +154,7 @@ public class CaseService {
 				throw new ServiceException("User could not be updated", e);
 			}
 		} else {
-			throw new ServiceException("User does not exists :" + userId);
+			throw new ServiceException("User does not exist :" + userId);
 		}
 	}
 
@@ -163,7 +163,7 @@ public class CaseService {
 		if (userRepository.exists(userId)) {
 			return userRepository.findOne(userId);
 		} else {
-			throw new ServiceException("User does not exists :" + userId);
+			throw new ServiceException("User does not exist :" + userId);
 		}
 
 	}
@@ -280,7 +280,7 @@ public class CaseService {
 		}
 	}
 
-	public Slice<Team> getAllTeams(Pageable pageable) {
+	public Page<Team> getAllTeams(Pageable pageable) {
 		try {
 			return teamRepository.findAll(pageable);
 		} catch (DataAccessException e) {
@@ -288,13 +288,14 @@ public class CaseService {
 		}
 	}
 
-	public Team addUserToTeam(Long userId, Long teamId) {
+	@Transactional
+	public User addUserToTeam(Long userId, Long teamId) {
 		try {
 			if (teamHasSpaceForUser(teamId)) {
 				Team team = teamRepository.findOne(teamId);
 				User user = userRepository.findOne(userId);
-				team.addUser(user);
-				return teamRepository.save(team);
+				user.setTeam(team);
+				return userRepository.save(user);
 				
 			} else {
 				throw new ServiceException("No space in team for user. userId = " + userId + "teamId = " + teamId);
@@ -341,6 +342,7 @@ public class CaseService {
 			throw new ServiceException("This WorkItem does not exist");
 	}
 
+	@Transactional
 	public WorkItem addWorkItemToUser(Long workItemId, Long userId) {
 		// PageRequest(0, 5) because if page 0 has 5 entries the method will
 		
@@ -453,7 +455,7 @@ public class CaseService {
 		}
 	}
 
-	public Slice<Issue> getAllIssues(Pageable pageable) {
+	public Page<Issue> getAllIssues(Pageable pageable) {
 		try {
 			return issueRepository.findAll(pageable);
 		} catch (DataAccessException e) {
@@ -509,7 +511,7 @@ public class CaseService {
 				return true;
 			}
 		}
-		if (workItems.getSize() < 5)
+		if (workItems.getNumberOfElements() < 5)
 			return true;
 		else
 			return false;

@@ -17,6 +17,10 @@
 
 		<hikari.version>2.5.1</hikari.version>
 		<jta.version>1.2</jta.version>
+
+		<hsqldb.version>2.3.4</hsqldb.version>
+		<dbh2.version>1.4.187</dbh2.version>
+		<derby.version>10.13.1.1</derby.version>
 	</properties>
 
 	<build>
@@ -86,6 +90,33 @@
 			<version>${commons.lang.version}</version>
 		</dependency>
 
+		<!-- HyperSQL DB -->
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>${hsqldb.version}</version>
+		</dependency>
+
+		<!-- H2 DB -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${dbh2.version}</version>
+		</dependency>
+
+		<!-- Derby DB -->
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+			<version>${derby.version}</version>
+		</dependency>
+
+		<!-- JUnit -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+		</dependency>
 
 	</dependencies>
 

@@ -1,5 +1,6 @@
 package se.plushogskolan.casemanagement.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.persistence.Column;
@@ -27,6 +28,7 @@ public class User extends AbstractEntity {
 
 	public User(String username) {
 		this.username = username;
+		this.workItems = new ArrayList<WorkItem>();
 	}
 
 	protected User() {
@@ -67,7 +69,7 @@ public class User extends AbstractEntity {
 		return team;
 	}
 
-	public Collection<WorkItem> getWorkItem() {
+	public Collection<WorkItem> getWorkItems() {
 		return workItems;
 	}
 
