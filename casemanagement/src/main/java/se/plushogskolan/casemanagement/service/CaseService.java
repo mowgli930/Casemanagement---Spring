@@ -418,15 +418,16 @@ public class CaseService {
 
 	@Transactional
 	public Issue save(Issue issue) {
-		if (workItemIsDone(issue.getWorkitem().getId())) {
+		if (workItemIsDone(issue.getWorkitem().getId()) && !isPersistedObject(issue)) {
 			try {
-				issueRepository.save(issue);
+				issue = issueRepository.save(issue);
 				WorkItem workItem = workItemRepository.findOne(issue.getWorkitem().getId());
 				workItem.setIssue(issue).setStatus(Status.UNSTARTED);
+				issue.setWorkItem(workItem);
 				workItemRepository.save(workItem);
 				return issue;
 			} catch (DataAccessException e) {
-				throw new ServiceException("Issue could not be saved");
+				throw new ServiceException("Issue could not be saved", e);
 			}
 		} else {
 			throw new ServiceException("WorkItem does not have status done");
@@ -440,7 +441,7 @@ public class CaseService {
 				issue.setDescription(description);
 				return issueRepository.save(issue);
 			} catch (DataAccessException e) {
-				throw new ServiceException("Issue could not be updated");
+				throw new ServiceException("Issue could not be updated", e);
 			}
 		} else {
 			throw new ServiceException("Could not change description of issue with id: " + issueId);
@@ -451,7 +452,7 @@ public class CaseService {
 		try {
 			return issueRepository.findOne(id);
 		} catch (DataAccessException e) {
-			throw new ServiceException("Could not get Issue with id: " + id);
+			throw new ServiceException("Could not get Issue with id: " + id, e);
 		}
 	}
 
@@ -459,7 +460,7 @@ public class CaseService {
 		try {
 			return issueRepository.findAll(pageable);
 		} catch (DataAccessException e) {
-			throw new ServiceException("Could not get issues");
+			throw new ServiceException("Could not get issues", e);
 		}
 	}
 

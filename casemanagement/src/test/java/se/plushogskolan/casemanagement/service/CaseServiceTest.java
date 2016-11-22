@@ -394,6 +394,15 @@ public class CaseServiceTest {
 	//Issue
 	
 	@Test
+	public void canSaveIssue() {
+		WorkItem doneWorkItem = new WorkItem("a done workItem", WorkItem.Status.DONE);
+		doneWorkItem = workItemRepository.save(doneWorkItem);
+		Issue issue = new Issue(doneWorkItem, "issue with doneWorkItem");
+		issue = service.save(issue);
+		assertTrue(issue.getWorkitem().getStatus().equals(WorkItem.Status.UNSTARTED));
+	}
+	
+	@Test
 	public void canUpdateIssueDescription() {
 		Long issueId = 40L;
 		Issue originalIssue = service.getIssue(issueId);
