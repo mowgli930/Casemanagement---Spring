@@ -48,13 +48,11 @@ public class CaseServiceTest {
 			issueRepository = context.getBean(IssueRepository.class);
 			workItemRepository = context.getBean(WorkItemRepository.class);
 			
-			UserRepository userRepository = context.getBean(UserRepository.class);
-			TeamRepository teamRepository = context.getBean(TeamRepository.class);
-			IssueRepository issueRepository = context.getBean(IssueRepository.class);
-			WorkItemRepository workItemRepository = context.getBean(WorkItemRepository.class);
+			userRepository = context.getBean(UserRepository.class);
+			teamRepository = context.getBean(TeamRepository.class);
+			issueRepository = context.getBean(IssueRepository.class);
+			workItemRepository = context.getBean(WorkItemRepository.class);
 		
-			System.out.printf("%d\n%d\n%d\n%d\n", userRepository.count(), teamRepository.count(),
-					issueRepository.count(), workItemRepository.count());
 			
 			for(int i = 1; i <= 25; i++) {
 				service.save(new User("username_" + i).setActive(true)
